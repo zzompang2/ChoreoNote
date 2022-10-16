@@ -1,8 +1,9 @@
 const passport = require('passport');
+const local = require('./localStrategy');
 const kakao = require('./kakaoStrategy');
 const google = require('./googleStrategy');
-
 const mysql = require('mysql2/promise');
+
 let connection;
 const db = async () => {
   try {
@@ -43,6 +44,7 @@ module.exports = () => {
     }
   });
   
+  local();
   google();
   kakao();
 };

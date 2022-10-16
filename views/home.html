@@ -10,6 +10,19 @@
       <div id="start" class="bg">
         <div class="title">Choreo Note</div>
         <div class="description">당신의 멋진 무대를 위해.</div>
+        <form id="login_form" action="/auth/login" method="post">
+          <div class="row">
+            <label for="email">이메일</label>
+            <input id="email" name="email" type="email" maxlength="40" required autofocus>
+          </div>
+          <div class="row">
+            <label for="password">비밀번호</label>
+            <input id="password" name="password" type="password" required autofocus>
+          </div>
+          <a id="join_btn" href="/join" class="btn">회원가입</a>
+          <button id="login_btn" type="submit" class="btn">로그인</button>
+        </form>
+        
         <div id="create_btn" class="btn">새로 만들기</div>
         <label id="file_btn" class="btn" for="input_file">불러오기</label>
         <input type="file" id="input_file" style="display: none">

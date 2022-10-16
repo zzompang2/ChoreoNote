@@ -1,13 +1,16 @@
 const express = require('express');
 const path = require('path');
+const passport = require('passport');
 const dotenv = require('dotenv');  // .env 파일 읽어서 process.env 로 만듦
+const session = require('express-session');
+
 dotenv.config();
-
-const app = express();
-
 const homeRouter = require('./routes/home');
 const authRouter = require('./routes/auth');
+const stageRouter = require('./routes/stage');
 const passportConfig = require('./passport');
+
+const app = express();
 passportConfig();		// 패스포트 설정
 
 /* app.set(key, value) 으로 데이터 저장 & app.get(key) 으로 사용 */
@@ -16,10 +19,23 @@ app.set('port', process.env.PORT || 3000);
 app.use(
 	express.static(path.join(__dirname, 'public')),  // 정적파일 제공
   express.json({ limit: "50MB" }),                 // 요청의 본문 데이터 해석해서 req.body 객체로 생성(body-parser)
+  express.urlencoded({ extended: false }),
+  session({
+    resave: false,
+    saveUninitialized: false,
+    secret: process.env.COOKIE_SECRET,
+    cookie: {
+      httpOnly: true,
+      secure: false,
+    },
+  })
 );
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use('/', homeRouter);
 app.use('/auth', authRouter);
+app.use('/stage', stageRouter);
 
 // 에러처리 미들웨어
 app.use((err, req, res, next) => {

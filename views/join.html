@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Choreo Note</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="/css/style.css">
+  </head>
+  <body>
+    <section id="start_section">
+      <div id="start" class="bg">
+        <div class="title">Choreo Note</div>
+        <div class="description">간편 회원가입!</div>
+        <form id="join_form" action="/auth/join" method="post">
+          <div class="row">
+            <label for="join_email">이메일</label>
+            <input id="join_email" type="email" name="email" maxlength="40" required autofocus>
+          </div>
+          <div class="row">
+            <label for="join_password">비밀번호</label>
+            <input id="join_password" type="password" name="password" required>
+          </div>
+          <div class="row">
+            <label for="join_nick">닉네임</label>
+            <input id="join_nick" type="text" name="nick" maxlength="10" required>
+          </div>
+          <button id="join_btn" type="submit" class="btn">가입하기</button>
+        </form>
+      </div>
+    </section>
+  </body>
+  <script>
+  	window.onload = () => {
+      if (new URL(location.href).searchParams.get('error')) {
+        alert('이미 존재하는 이메일입니다.');
+      }
+    };
+  </script>
+</html>

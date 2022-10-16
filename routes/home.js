@@ -5,8 +5,16 @@ const router = express.Router();
 
 router.get('/', async (req, res, next) => {
   try {
-    console.log(__dirname + '/../views/index.html');
     res.sendFile('home.html', { root: path.join(__dirname, '../views') });
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+});
+
+router.get('/join', async (req, res, next) => {
+  try {
+    res.sendFile('join.html', { root: path.join(__dirname, '../views') });
   } catch (err) {
     console.error(err);
     next(err);

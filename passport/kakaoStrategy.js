@@ -1,7 +1,7 @@
 const passport = require('passport');
 const KakaoStrategy = require('passport-kakao').Strategy;
-
 const mysql = require('mysql2/promise');
+
 let connection;
 const db = async () => {
   try {
