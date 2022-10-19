@@ -105,14 +105,18 @@ body {
   height: 2rem;
   margin-top: 14px;
   padding: 0 20px;
-  font-size: 0.7rem;
+  font-size: 0.8rem;
+}
+.sidebar_header span {
+  font-family: GmarketSansTTFBold;
 }
 
 .button__textbox {
   display: flex;
   align-items: center;
-  padding: 5px 20px;
-  font-size: 0.9rem;
+  height: 2rem;
+  padding: 0 20px;
+  font-size: 0.8rem;
   cursor: pointer;
 }
 .button__textbox:focus, .button__textbox:hover {
@@ -136,6 +140,10 @@ body {
   padding: 20px;
 }
 
+.grid--onload > * {
+  transition-duration: 200ms;
+}
+
 .note__container {
   position: relative;
   height: 60px;
@@ -144,7 +152,6 @@ body {
   border: 1px solid var(--color-border);
   border-radius: 6px;
   cursor: pointer;
-  transition-duration: 200ms;
 }
 .note__container:focus, .note__container:hover {
   border-color: var(--color-brand);
@@ -158,8 +165,6 @@ body {
   background-color: var(--color-container-90);
   border: 1px solid var(--color-border);
   border-radius: 6px;
-  cursor: pointer;
-  transition-duration: 200ms;
 }
 
 .note__body {
@@ -185,9 +190,15 @@ body {
 }
 
 .logo {
-  width: 225px;
-  height: 45px;
+  width: 200px;
+  height: 60px;
   background: url("../assets/icons/logo.svg") no-repeat center;
+  background-size: contain;
+}
+
+.logo--small {
+  width: 150px;
+  height: 35px;
 }
 
 .note__titlePart {
@@ -209,13 +220,15 @@ body {
 }
 
 .text__button {
-  width: 100%;
-  height: 100%;
-  background-color: yellow;
-  padding: 6px 0;
   display: flex;
   justify-content: center;
   align-items: center;
+  width: 100%;
+  height: 100%;
+  padding: 6px 0;
+  font-size: 0.8rem;
+  color: var(--color-white);
+  background-color: var(--color-brand);
   border-radius: 6px;
 }
 .text__button:focus, .text__button:hover {

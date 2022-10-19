@@ -20,3 +20,16 @@ return `${Math.floor(ms / 60000)}:` +
 const floorTime = (ms) => Math.floor(ms / TIME_UNIT) * TIME_UNIT;
 const roundTime = (ms) => Math.round(ms / TIME_UNIT) * TIME_UNIT;
 const roundPos = (pos, gap) => Math.round(pos / gap) * gap;
+
+function $(tag) {
+  switch(tag[0]) {
+    case "#":
+      return document.getElementById(tag.slice(1));
+      break;
+    case ".":
+      return document.getElementsByClassName(tag.slice(1));
+      break;
+    default:
+      console.error("유효하지 않은 값");
+  }
+}
