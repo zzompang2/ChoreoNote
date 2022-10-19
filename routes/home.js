@@ -22,13 +22,4 @@ router.get('/join', isNotLoggedIn, async (req, res, next) => {
   }
 });
 
-router.get('/dashboard', isLoggedIn, async (req, res, next) => {
-  try {
-    res.sendFile('dashboard.html', { root: path.join(__dirname, '../views') });
-  } catch (err) {
-    console.error(err);
-    next(err);
-  }
-});
-
 module.exports = router;

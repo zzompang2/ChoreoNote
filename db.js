@@ -21,7 +21,7 @@ db();
 
 function executeQuerys() {
   const dropQuerys = [
-    `DROP TABLE IF EXISTS user;`,
+    // `DROP TABLE IF EXISTS user;`,
     `DROP TABLE IF EXISTS note;`,
     `DROP TABLE IF EXISTS dancer;`,
     `DROP TABLE IF EXISTS time;`,
@@ -45,7 +45,7 @@ function executeQuerys() {
     id        INT NOT NULL AUTO_INCREMENT,
     uid       INT NOT NULL,
     music     VARCHAR(50),
-    duration  INT NOT NULL,
+    duration  INT NOT NULL DEFAULT 10000,
     editedAt  DATETIME NOT NULL DEFAULT now(),
     createdAt DATETIME NOT NULL DEFAULT now(),
     PRIMARY KEY(id),
