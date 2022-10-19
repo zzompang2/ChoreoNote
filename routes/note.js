@@ -32,9 +32,9 @@ router.get('/', isLoggedIn, async (req, res, next) => {
     console.log(note);
     
     if (note.uid == req.user.id)
-    	res.sendFile('note.html', { root: path.join(__dirname, '../views') });
+    	res.render('note');
     else
-      res.redirect('/dashboard');
+      res.render('dashboard');
   } catch (err) {
     console.error(err);
     next(err);

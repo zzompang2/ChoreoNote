@@ -1,0 +1,34 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Choreo Note</title>
+    <meta charset="utf-8" name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" href="/css/layout.css">
+    {% block style %}
+    {% endblock %}
+  </head>
+  <body>
+      
+    <header class="header">
+      {% block header %}
+    	{% endblock %}
+    </header>
+    
+    <section class="sidebar">
+      {% block sidebar %}
+    	{% endblock %}
+    </section>
+    
+    
+    <section class="body">
+      {% block body %}
+    	{% endblock %}
+    </section>
+      
+  </body>
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script type="module" src="/js/layout.js"></script>
+  {% block script %}
+  {% endblock %}
+</html>

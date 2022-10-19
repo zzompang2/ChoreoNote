@@ -1,64 +1,72 @@
-<!doctype html>
-<html>
-  <head>
-    <title>Choreo Note</title>
-    <meta charset="utf-8">
-    <link rel="stylesheet" href="/css/style.css">
-  </head>
-  <body>
-    <header id="main_header">
-      <span id="title">Choreo Note</span>
-      <div id="save_btn" class="btn_text">
-        저장하기
-      </div>
-    </header>
+{% extends 'layout.html' %}
 
-    <section id="main_section">
-      <div id="left_toolbar" class="left toolbar">
-        <div id="coordinate_btn" class="btn_text active">
-          격자<br/>보기
-        </div>
-        <div id="snap_btn" class="btn_text">
-          격자<br/>맞춤
-        </div>
-        <div id="dancer_name_btn" class="btn_text">
-          이름<br/>보기
-        </div>
-        <div id="rotate_btn" class="btn_text">
-          무대<br/>회전
-        </div>
-        <div id="slope_btn" class="btn_text">
-          무대<br/>3D
-        </div>
-      </div>
-      <div id="container" class="flex_column"></div>
-      <div id="right_toolbar" class="right toolbar">
-        <div id="dancer_btn" class="btn_text">
-          <object style="width: 10px;" type="image/svg+xml" data="./assets/icons/Medium(24)/Left.svg"></object>
-          댄서
-        </div>
-        <div id="setting_btn" class="btn_text">
-          <object style="width: 10px;" type="image/svg+xml" data="./assets/icons/Medium(24)/Left.svg"></object>
-          노트<br/>설정
-        </div>
-      </div>
-    </section>
-    
-    <div id="divider"></div>
-    
-    <section id="timeline_section">
-      <div title="container"></div>
-    </section>
+{% block style %}
+<link rel="stylesheet" href="/css/style.css">
+{% endblock %}
 
-    <section id="tool_section">
-      <div id="copy_btn" class="btn">복사하기</div>
-      <div id="paste_btn" class="btn">붙여넣기</div>
-      <div id="delete_btn" class="btn">삭제</div>
-    </section>
+{% block header %}
+<div id="save_btn" class="btn_text">
+  저장하기
+</div>
+{% endblock %}
 
-    <audio id="audio" preload="metadata">
-      <source type="audio/mp3">
-    </audio>
-  </body>
-  <script src="/js/home.js" type="module"></script>
-</html>
+{% block sidebar %}
+
+{% endblock %}
+
+{% block body %}
+<section id="main_section">
+  <div id="left_toolbar" class="left toolbar">
+    <div id="coordinate_btn" class="btn_text active">
+      격자<br/>보기
+    </div>
+    <div id="snap_btn" class="btn_text">
+      격자<br/>맞춤
+    </div>
+    <div id="dancer_name_btn" class="btn_text">
+      이름<br/>보기
+    </div>
+    <div id="rotate_btn" class="btn_text">
+      무대<br/>회전
+    </div>
+    <div id="slope_btn" class="btn_text">
+      무대<br/>3D
+    </div>
+  </div>
+  <div id="container" class="flex_column"></div>
+  <div id="right_toolbar" class="right toolbar">
+    <div id="dancer_btn" class="btn_text">
+      <object style="width: 10px;" type="image/svg+xml" data="./assets/icons/Medium(24)/Left.svg"></object>
+      댄서
+    </div>
+    <div id="setting_btn" class="btn_text">
+      <object style="width: 10px;" type="image/svg+xml" data="./assets/icons/Medium(24)/Left.svg"></object>
+      노트<br/>설정
+    </div>
+  </div>
+</section>
+
+<div id="divider"></div>
+
+<section id="timeline_section">
+  <div title="container"></div>
+</section>
+
+<section id="tool_section">
+  <div id="copy_btn" class="btn">복사하기</div>
+  <div id="paste_btn" class="btn">붙여넣기</div>
+  <div id="delete_btn" class="btn">삭제</div>
+</section>
+
+<audio id="audio" preload="metadata">
+  <source type="audio/mp3">
+</audio>
+{% endblock %}
+
+{% block script %}
+<script src="/js/home.js" type="module"></script>
+{% endblock %}
+
+
+
+

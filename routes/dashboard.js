@@ -22,7 +22,7 @@ db();
 
 router.get('/', isLoggedIn, async (req, res, next) => {
   try {
-    res.sendFile('dashboard.html', { root: path.join(__dirname, '../views') });
+    res.render('dashboard');
   } catch (err) {
     console.error(err);
     next(err);

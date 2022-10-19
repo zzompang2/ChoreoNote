@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.get('/', isNotLoggedIn, async (req, res, next) => {
   try {
-    res.sendFile('home.html', { root: path.join(__dirname, '../views') });
+    res.render('home');
   } catch (err) {
     console.error(err);
     next(err);
@@ -15,7 +15,7 @@ router.get('/', isNotLoggedIn, async (req, res, next) => {
 
 router.get('/join', isNotLoggedIn, async (req, res, next) => {
   try {
-    res.sendFile('join.html', { root: path.join(__dirname, '../views') });
+    res.render('join');
   } catch (err) {
     console.error(err);
     next(err);

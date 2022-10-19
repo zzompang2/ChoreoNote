@@ -3,6 +3,7 @@ const path = require('path');
 const passport = require('passport');
 const dotenv = require('dotenv');  // .env 파일 읽어서 process.env 로 만듦
 const session = require('express-session');
+const nunjucks = require('nunjucks');  // 템플릿 엔진
 
 dotenv.config();
 const homeRouter = require('./routes/home');
@@ -16,6 +17,15 @@ passportConfig();		// 패스포트 설정
 
 /* app.set(key, value) 으로 데이터 저장 & app.get(key) 으로 사용 */
 app.set('port', process.env.PORT || 3000);
+app.set('view engine', 'html');  // for nunjucks
+
+// 'views' : 템플릿 파일들 위치한 폴더 지정.
+// - res.render 메서드가 이 폴더 기준으로 템플릿 엔진을 찾아 렌더링
+// watch-true : HTML 파일 변경될 때 템플릿 엔진 다시 렌더링
+nunjucks.configure('views', {
+  express: app,
+  watch: true,
+});
 
 app.use(
 	express.static(path.join(__dirname, 'public')),  // 정적파일 제공
