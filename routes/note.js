@@ -1,12 +1,40 @@
 const express = require('express');
 const path = require('path');
+const mysql = require('mysql2/promise');
 const { isLoggedIn, isNotLoggedIn } = require('./middlewares');
+
+let connection;
+const db = async () => {
+  try {
+    connection = await mysql.createConnection({
+      host     : process.env.MYSQL_HOST,
+      user     : process.env.MYSQL_USER,
+      password : process.env.MYSQL_PW,
+      database : 'choreonote'
+    });
+  } catch (err) {
+    console.error(err);
+  }
+}
+db();
 
 const router = express.Router();
 
 router.get('/', isLoggedIn, async (req, res, next) => {
   try {
-    res.sendFile('note.html', { root: path.join(__dirname, '../views') });
+    const { id } = req.query;
+    
+    const [[ note ]] = await connection.query(
+      "SELECT uid FROM note WHERE id = ?;",
+      [id]
+    );
+    
+    console.log(note);
+    
+    if (note.uid == req.user.id)
+    	res.sendFile('note.html', { root: path.join(__dirname, '../views') });
+    else
+      res.redirect('/dashboard');
   } catch (err) {
     console.error(err);
     next(err);
