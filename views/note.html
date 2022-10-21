@@ -1,7 +1,5 @@
 {% extends 'layout.html' %}
 
-{% set useRightSidebar = true %}
-
 {% block style %}
 <link rel="stylesheet" href="/css/note.css">
 {% endblock %}
@@ -26,6 +24,11 @@
   <label tabindex="0" class="sidebar_button">
     <input class="checkbox" type="checkbox" id="slope_btn">무대 3D</label>
 </div>
+<div class="sidebar_group">
+  <div class="sidebar_header"><span>댄서</span></div>
+  <div tabindex="0" class="sidebar_button">1. 함창수</div>
+  <div tabindex="0" class="sidebar_button">2. 쫌팡이</div>
+</div>
 {% endblock %}
 
 {% block body %}
@@ -47,14 +50,6 @@
 <audio id="audio" preload="metadata">
   <source type="audio/mp3">
 </audio>
-{% endblock %}
-
-{% block sidebarRight %}
-<div class="sidebar_group">
-  <div class="sidebar_header"><span>댄서</span></div>
-  <div tabindex="0" class="sidebar_button">1. 함창수</div>
-  <div tabindex="0" class="sidebar_button">2. 쫌팡이</div>
-</div>
 {% endblock %}
 
 {% block script %}
