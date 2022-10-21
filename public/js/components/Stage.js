@@ -21,9 +21,6 @@ export default class Stage {
     this.isSnaped = false;
     this.nameIsShown = false;
 
-    // this.$stageSection = document.createElement("div");
-    // this.$stageSection.id = "stage_section";
-    // this.$stageSection.className = "stage";
     this.$stageSection = $("#stage_section");
     this.$stageWrap = $("#stage_wrap");
 
@@ -63,7 +60,6 @@ export default class Stage {
       this.$stageAxis.appendChild($axis);
       i++;
     }
-    // this.$stageSection.appendChild(this.$stageAxis);
 
     /* STAGE */
     this.$stageDancer = $("#stage_dancer");
@@ -74,7 +70,6 @@ export default class Stage {
       this.dancerObjArray.push(dancerObj);
       this.$stageDancer.appendChild(dancerObj.$dancer);
     });
-    // this.$stageSection.appendChild(this.$stageDancer);
 
     /* BUTTON */
     const $coordBtn = document.getElementById("coordinate_btn");

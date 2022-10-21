@@ -1,98 +1,36 @@
-import { STAGE_WIDTH, STAGE_HEIGHT, PIXEL_PER_SEC, TIMELINE_PADDING, TIME_UNIT,
-HANDLE_WIDTH, COLOR_NUM, musicDurationFormat, $ } from "/js/constant.js";
+import { musicDurationFormat, $ } from "/js/constant.js";
 const TAG = "MusicPlayer.js/";
 
 export default class MusicPlayer {
   constructor({ musicInfo, curTime, clickPlayBtn, addFormationBox }) {
-    this.$playerSection = document.createElement("div");
-    this.$playerSection.id = "player_section";
+    this.$playerSection = $("#player_section");
 
     this.isMusicPlaying = false;
 
     // TRACK
-    const $track = document.createElement("div");
-    $track.id = "track";
-    this.$progress = document.createElement("div");
-    this.$progress.id = "progress";
-    this.$progress.style.width = "0";
-    $track.appendChild(this.$progress);
 
-    const $timeAndBtn = document.createElement("div");
-    $timeAndBtn.id = "time_and_btn";
+    this.$progress = this.$playerSection.querySelector("#progress");
+    this.$progress.style.width = "0";
 
     // TIME TEXT
-    this.$curTimeText = document.createElement("div");
-    this.$curTimeText.id = "curtime_text";
-    this.$curTimeText.className = "time_number";
-    const $curTimeSec = document.createElement("div");
-    $curTimeSec.className = "min_sec";
-    let $textNode = document.createTextNode("0:00.");
-    $curTimeSec.appendChild($textNode);
-    const $curTimeMSec = document.createElement("div");
-    $curTimeMSec.className = "millisec";
-    $textNode = document.createTextNode("000");
-    $curTimeMSec.appendChild($textNode);
-    this.$curTimeText.appendChild($curTimeSec);
-    this.$curTimeText.appendChild($curTimeMSec);
+    this.$curTimeText = this.$playerSection.querySelector("#curtime_text");
 
     // BUTTON
-    const $btnContainer = document.createElement("div");
-    $btnContainer.id = "btn_container";
-
-    const $addBtn = document.createElement("div");
-    $addBtn.id = "add_btn";
-    $addBtn.className = "icon_btn";
+    const $addBtn = this.$playerSection.querySelector("#add_btn");
     $addBtn.onclick = addFormationBox;
-    const $addIcon = document.createElement("object");
-    $addIcon.id = "add";
-    $addIcon.type = "image/svg+xml";
-    $addIcon.data = "./assets/icons/Large(32)/Add.svg";
-    $addBtn.appendChild($addIcon);
 
-    const $playBtn = document.createElement("div");
-    $playBtn.id = "play_btn";
-    $playBtn.className = "icon_btn";
+    const $playBtn = this.$playerSection.querySelector("#play_btn");
     $playBtn.onclick = clickPlayBtn;
-    this.$playIcon = document.createElement("object");
-    this.$playIcon.id = "play";
-    this.$playIcon.type = "image/svg+xml";
-    this.$playIcon.data = "./assets/icons/Large(32)/Play.svg";
-    this.$pauseIcon = document.createElement("object");
-    this.$pauseIcon.id = "pause";
-    this.$pauseIcon.type = "image/svg+xml";
-    this.$pauseIcon.data = "./assets/icons/Large(32)/Pause.svg";
-    this.$pauseIcon.style.display = "none";
-    $playBtn.appendChild(this.$playIcon);
-    $playBtn.appendChild(this.$pauseIcon);
 
-    $btnContainer.appendChild($addBtn);
-    $btnContainer.appendChild($playBtn);
-
+    this.$playIcon = $playBtn.children[0];
+    this.$pauseIcon = $playBtn.children[1];
+      
     // DURATION TEXT
-    const $durationText = document.createElement("div");
-    $durationText.id = "duration_text";
-    $durationText.className = "time_number";
-    const $durationSec = document.createElement("div");
-    $durationSec.className = "min_sec";
-    $textNode = document.createTextNode("0:00.");
-    $durationSec.appendChild($textNode);
-    const $durationMSec = document.createElement("div");
-    $durationMSec.className = "millisec";
-    $textNode = document.createTextNode("000");
-    $durationMSec.appendChild($textNode);
-    $durationText.appendChild($durationSec);
-    $durationText.appendChild($durationMSec);
+    const $durationText = this.$playerSection.querySelector("#duration_text");
 
     const text = musicDurationFormat(musicInfo.duration, true);
     $durationText.children[0].childNodes[0].data = text.slice(0, -3);
     $durationText.children[1].childNodes[0].data = text.slice(-3);
-
-    $timeAndBtn.appendChild(this.$curTimeText);
-    $timeAndBtn.appendChild($btnContainer);
-    $timeAndBtn.appendChild($durationText);
-
-    this.$playerSection.appendChild($track);
-    this.$playerSection.appendChild($timeAndBtn);
 
     this.musicCanPlay = musicInfo.name == "" ? false : true;
     this.$audio = document.getElementById("audio");
