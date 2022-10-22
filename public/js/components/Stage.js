@@ -63,7 +63,6 @@ export default class Stage {
 
     /* STAGE */
     this.$stageDancer = $("#stage_dancer");
-    this.$stageDancer.setAttribute("id", "stage_dancer");
     this.$stageDancer.ondragover = e => e.preventDefault();
     this.dancerArray.forEach((dancer, idx) => {
       const dancerObj = new Dancer({ dancer, position: this.#curPos[idx], gap });

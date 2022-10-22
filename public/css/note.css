@@ -1,33 +1,4 @@
 @charset "UTF-8";
-::-webkit-scrollbar {
-  height: 12px;
-}
-
-::-webkit-scrollbar-thumb {
-  background-color: var(--color-blackLight);
-}
-
-::-webkit-scrollbar-track {
-  background-color: var(--color-blackMiddle);
-}
-
-/*************/
-/*** STAGE ***/
-/*************/
-.body {
-  background-color: var(--color-bg-dark);
-}
-
-/***************/
-/*** SIDEBAR ***/
-/***************/
-.checkbox {
-  margin-right: 6px;
-}
-
-/*************/
-/*** STAGE ***/
-/*************/
 .stage {
   width: 600px;
   height: 400px;
@@ -70,9 +41,6 @@
   transform-style: preserve-3d;
 }
 
-/**************/
-/*** PLAYER ***/
-/**************/
 .player {
   display: flex;
   flex-direction: column;
@@ -141,9 +109,6 @@
   color: var(--color-grayMiddle);
 }
 
-/**************/
-/*** DANCER ***/
-/**************/
 .dancer {
   position: absolute;
   width: 30px;
@@ -155,6 +120,10 @@
   justify-content: center;
   transition-timing-function: ease-in-out;
   transform-style: preserve-3d;
+  cursor: grab;
+}
+.dancer:active {
+  cursor: grabbing !important;
 }
 
 .up {
@@ -230,9 +199,6 @@
   transition-duration: 1s;
 }
 
-/****************/
-/*** TIMELINE ***/
-/****************/
 .divider {
   position: relative;
   width: 100%;
@@ -301,6 +267,9 @@
   position: absolute;
   height: 100px;
 }
+.formationBox:active {
+  cursor: grabbing !important;
+}
 
 .formationBox__body {
   height: 100%;
@@ -361,9 +330,6 @@
   border-radius: 0 0 6px 6px;
 }
 
-/************/
-/*** TOOL ***/
-/************/
 .toolbar {
   display: flex;
 }
@@ -382,9 +348,6 @@
   background-color: var(--color-white);
 }
 
-/*************/
-/*** TOAST ***/
-/*************/
 .toast {
   display: flex;
   align-items: center;
@@ -408,6 +371,22 @@
 
 .toast--warning {
   background-color: var(--color-red);
+}
+
+::-webkit-scrollbar {
+  height: 12px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--color-blackLight);
+}
+
+::-webkit-scrollbar-track {
+  background-color: var(--color-blackMiddle);
+}
+
+.body {
+  background-color: var(--color-bg-dark);
 }
 
 /*# sourceMappingURL=note.css.map */

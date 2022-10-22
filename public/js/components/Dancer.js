@@ -1,5 +1,4 @@
-import { STAGE_WIDTH, STAGE_HEIGHT, PIXEL_PER_SEC, TIMELINE_PADDING, TIME_UNIT,
-HANDLE_WIDTH, COLOR_NUM, $ } from "/js/constant.js";
+import { STAGE_WIDTH, STAGE_HEIGHT, COLOR_NUM, roundPos, $ } from "/js/constant.js";
 import Toast from "./Toast.js";
 
 const TAG = "Dancer.js/";
@@ -62,6 +61,7 @@ export default class Dancer {
       }
       else
       e.target.style.transform = `translate(${e.clientX - initialPos.x}px, ${e.clientY - initialPos.y}px)`;
+    	e.dataTransfer.effectAllowed = "move";
     }
 
     const dragEnd = e => {

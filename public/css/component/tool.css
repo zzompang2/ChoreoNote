@@ -1,0 +1,19 @@
+.toolbar {
+  display: flex;
+}
+
+.toolbar__button {
+  color: var(--color-grayDark);
+  font-size: 12px;
+  background-color: var(--color-blackLight);
+  padding: 8px 12px;
+  margin: 16px 8px;
+  border-radius: 8px;
+}
+
+.toolbar__button--active {
+  color: var(--color-blackMiddle);
+  background-color: var(--color-white);
+}
+
+/*# sourceMappingURL=tool.css.map */

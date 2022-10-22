@@ -1,0 +1,65 @@
+.player {
+  display: flex; flex-direction: column;
+  width: 600px;
+}
+
+.player__track {
+  width: 100%; height: 6px;
+  
+  background-color: var(--color-blackLight);
+}
+
+.player__progress {
+  height: 100%;
+  
+  background-color: var(--color-yellow);
+  transition-timing-function: linear;
+}
+
+.player__lowerPart {
+  display: flex;
+  align-items: center; justify-content: space-between;
+  width: 100%;
+  padding: 8px 0;
+}
+
+.flexContainer--row {
+  display: flex;
+  align-items: center;
+}
+
+.icon--medium {
+  width: 36px; height: 36px;
+}
+
+.icon__add {
+  background: url("../assets/icons/Large(32)/Add.svg") no-repeat center;
+}
+
+.icon__play {
+  background: url("../assets/icons/Large(32)/Play.svg") no-repeat center;
+}
+
+.icon__pause {
+  background: url("../assets/icons/Large(32)/Pause.svg") no-repeat center;
+}
+
+.player__timeContainer {
+  display: flex;
+  align-items: flex-end;
+}
+
+.player__time--large {
+  width: 42px;
+  text-align: end;
+  font-size: 16px;
+  color: var(--color-grayLight);
+}
+
+.player__time--small {
+  width: 26px;
+  text-align: start;
+  font-size: 12px;
+  margin-bottom: 1px;
+  color: var(--color-grayMiddle);
+}
