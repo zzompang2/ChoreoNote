@@ -23,7 +23,7 @@ const state = {
   noteName: "test",
   dancerArray: [],
   formationArray: [],
-  musicInfo: { name: "testMusic", duration: 30000},
+  musicInfo: { name: "testMusic", duration: 30000 },
   curTime: 0,               // millisecond
   isMusicPlaying: false,
   selectedBoxIdx: -1,
@@ -39,7 +39,7 @@ let noteName;
 createNote();
 
 function createNote() {
-  state.dancerArray = [{ id: 0, name: "햄", color: 0 }, { id: 1, name: "팡이", color: 0 }];
+  state.dancerArray = [{ id: 0, name: "햄", color: "#ff631b" }, { id: 1, name: "팡이", color: "#8249d3" }];
   state.formationArray = [
     {
       time: 0, duration: 2000,

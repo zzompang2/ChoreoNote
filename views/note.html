@@ -12,6 +12,18 @@
 
 {% block sidebar %}
 <div class="sidebar_group">
+  <div class="sidebar_header"><span>노트 정보</span></div>
+  <label class="sidebar_item">
+    <span class="sidebar_label">제목</span>
+    <input class="sidebar_input" type="text" placeholder="노트 제목">
+  </label>
+  <label class="sidebar_button">
+    <div class="sidebar_label">노래</div>
+    <div class="sidebar_input">노래 없음</div>
+    <input id="music_input" type="file" style="display: none">
+  </label>
+</div>
+<div class="sidebar_group">
   <div class="sidebar_header"><span>무대 설정</span></div>
   <label tabindex="0" class="sidebar_button">
     <input class="checkbox" type="checkbox" id="coordinate_btn" checked>격자 보기</label>
@@ -25,9 +37,23 @@
     <input class="checkbox" type="checkbox" id="slope_btn">무대 3D</label>
 </div>
 <div class="sidebar_group">
-  <div class="sidebar_header"><span>댄서</span></div>
-  <div tabindex="0" class="sidebar_button">1. 함창수</div>
-  <div tabindex="0" class="sidebar_button">2. 쫌팡이</div>
+  <div class="sidebar_header">
+    <span>댄서</span>
+    <div id="add_dancer_button" class="sidebar_button__addButton"></div>
+  </div>
+  <div id="edit_dancer" class="sidebar_item">
+    <label class="sidebar_itemChild">
+      <span class="sidebar_label">X</span>
+      <input id="edit_dancer_posx" class="sidebar_input" type="number">
+    </label>
+    <label class="sidebar_itemChild">
+      <span class="sidebar_label">Y</span>
+      <input id="edit_dancer_posy" class="sidebar_input" type="number">
+    </label>
+  </div>
+  <div id="dancer_list">
+		<!--   DANCER ITEMS   -->
+  </div>
 </div>
 {% endblock %}
 
