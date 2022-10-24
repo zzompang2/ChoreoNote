@@ -591,7 +591,7 @@ function addDancer() {
   state.dancerArray.push({
     id,
     name: id+1+"",
-    color: 0
+    color: "#ff631b"
   });
   state.formationArray.forEach(formation => {
     formation.positionsAtSameTime.push({ did: id, posx: 0, posy: 0 });
@@ -623,11 +623,8 @@ function changeDancerName(id, name) {
   stage.changeName(id, name);
 }
 
-function changeDancerColor(id) {
-  if(state.dancerArray[id].color == COLOR_NUM-1)
-  state.dancerArray[id].color = 0;
-  else
-  state.dancerArray[id].color++;
+function changeDancerColor(id, color) {
+  state.dancerArray[id].color = color;
   stage.changeColor(id);
 }
 

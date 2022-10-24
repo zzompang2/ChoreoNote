@@ -23,16 +23,49 @@ export default class Dancer {
 
     // 윗면
     const $up = document.createElement("div");
-    $up.className = `up color${dancer.color}`;
+    $up.className = "up";
+    $up.style.backgroundColor = dancer.color;
     const $textNode = document.createTextNode(dancer.id+1);  // 표시할 숫자는 id+1
     $up.appendChild($textNode);
     this.$dancer.appendChild($up);
 
+    // SIDE
+    
+    this.getSideColor = (hexColor) => {
+      console.log(hexColor);
+      const magnitude = -20;
+      hexColor = hexColor.replace(`#`, ``);
+      if (hexColor.length === 6) {
+        const decimalColor = parseInt(hexColor, 16);
+        let r = (decimalColor >> 16) + magnitude;
+        r > 255 && (r = 255);
+        r < 0 && (r = 0);
+        let g = (decimalColor & 0x0000ff) + magnitude;
+        g > 255 && (g = 255);
+        g < 0 && (g = 0);
+        let b = ((decimalColor >> 8) & 0x00ff) + magnitude;
+        b > 255 && (b = 255);
+        b < 0 && (b = 0);
+        let result = (g | (b << 8) | (r << 16)).toString(16);
+        console.log(result);
+        while(result.length !== 6) {
+          result = "0" + result;
+        }
+        return `#${result}`;
+      } else {
+        return hexColor;
+      }
+    };
+    
+    this.getSideColor("#1af0ff");
+    
     const $sideGroup = document.createElement("div");
     $sideGroup.className = "side_group";
+    const sideColor = this.getSideColor(dancer.color);
     for(let i=0; i<24; i++) {
       const $side = document.createElement("div");
-      $side.className = `side side_color${dancer.color}`;
+      $side.className = "side";
+      $side.style.backgroundColor = sideColor;
       $side.style.transform = `translateY(-20px) rotateX(-90deg) rotateY(${15*i}deg) translateZ(14.5px)`;
       $sideGroup.appendChild($side);
     }
@@ -141,13 +174,12 @@ export default class Dancer {
 
   changeColor() {
     const color = this.dancer.color;
-    const oldColor = color - 1 < 0 ? COLOR_NUM-1 : color - 1;
+    const sideColor = this.getSideColor(color);
+    
+    this.$dancer.querySelector(".up").style.backgroundColor = color;
 
-    this.$dancer.firstChild.classList.remove(`color${oldColor}`);
-    this.$dancer.firstChild.classList.add(`color${color}`);
     [...this.$dancer.lastChild.children].forEach($side => {
-      $side.classList.remove(`side_color${oldColor}`);
-      $side.classList.add(`side_color${color}`);
+      $side.style.backgroundColor = sideColor;
     });
   }
 

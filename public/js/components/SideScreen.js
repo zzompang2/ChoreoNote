@@ -33,6 +33,11 @@ export default class SideScreen {
         { type: "color", value: dancer.color });
       $dancerIndex.append($colorInput);
 
+      $colorInput.onchange = e => {
+        changeDancerColor(dancer.id, e.target.value);
+        $dancerIndex.style.backgroundColor = e.target.value;
+      }
+      
       const $name = $(
         "input.sidebar_input",
         {
