@@ -248,4 +248,12 @@ export default class Stage {
       dancer.decreaseId(this.nameIsShown);
     });
   }
+  
+  selectDancer(id) {
+    this.dancerObjArray[id].select();
+  }
+  
+  unselectDancer(id) {
+    this.dancerObjArray[id].unselect();
+  }
 }

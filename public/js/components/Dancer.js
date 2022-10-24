@@ -189,4 +189,12 @@ export default class Dancer {
     if(!nameIsShown)
     this.$dancer.firstChild.innerText = this.dancer.id+1;
   }
+  
+  select() {
+    this.$dancer.classList.add("dancer--selected");
+  }
+  
+  unselect() {
+    this.$dancer.classList.remove("dancer--selected");
+  }
 }

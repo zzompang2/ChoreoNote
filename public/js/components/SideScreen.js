@@ -1,5 +1,4 @@
-import { STAGE_WIDTH, STAGE_HEIGHT, PIXEL_PER_SEC, TIMELINE_PADDING, TIME_UNIT,
-HANDLE_WIDTH, COLOR_NUM, $ } from "/js/constant.js";
+import { $, createElemWithHtml } from "/js/constant.js";
 const TAG = "SideScreen.js/";
 
 export default class SideScreen {
@@ -8,18 +7,34 @@ export default class SideScreen {
     addDancer,
     deleteDancer,
     changeDancerName,
-    changeDancerColor
+    changeDancerColor,
+    selectDancer,
   }) {
     this.dancerArray = dancerArray;
     this.changeDancerName = changeDancerName;
     this.deleteDancer = deleteDancer;
     this.changeDancerColor = changeDancerColor;
+    this.selectDancer = selectDancer;
     this.screenIsShown = true;
 
     this.$sideScreen = $("#sidebar");
 
+    this.$sideScreen.onclick = () => selectDancer(-1);
     $("#add_dancer_button").onclick = addDancer;
-
+    
+    this.editDancerListItem = createElemWithHtml(`
+    <div id="edit_dancer" class="sidebar_item">
+      <label class="sidebar_itemChild">
+        <span class="sidebar_label">X</span>
+        <input id="edit_dancer_posx" class="sidebar_input" type="number">
+      </label>
+      <label class="sidebar_itemChild">
+        <span class="sidebar_label">Y</span>
+        <input id="edit_dancer_posy" class="sidebar_input" type="number">
+      </label>
+    </div>
+    `);
+    
     this.createDancerButtonElem = function(dancer) {
       const $dancerButtonContainer = $("div.sidebar_container");
       const $dancerButton = $("div.sidebar_button");
@@ -64,18 +79,10 @@ export default class SideScreen {
       $dancerButton.append($dancerIndex, $name, $deleteButton);
       $dancerButtonContainer.append($dancerButton);
       
-      this.selectedDancer = null;
-      
       $dancerButton.onclick = e => {
+        e.stopPropagation();
         console.log("선택", dancer.id);
-        
-        if (this.selectedDancer != null) {
-          $("#dancer_list").children[this.selectedDancer].classList.remove("sidebar_button--selected");
-        }
-        this.selectedDancer = dancer.id;
-        $("#dancer_list").children[this.selectedDancer].classList.add("sidebar_button--selected");
-      	
-        $("#dancer_list").children[this.selectedDancer].append($("#edit_dancer"));
+        selectDancer(dancer.id);
       }
       
       return $dancerButtonContainer;
@@ -107,5 +114,14 @@ export default class SideScreen {
     [...this.$sideScreen.lastChild.children].forEach(($elem, id) => {
       $elem.firstChild.innerText = id+1;
     });
+  }
+  
+  unselect(id) {
+    $("#dancer_list").children[id].classList.remove("sidebar_button--selected");
+  }
+  
+  select(id) {
+    $("#dancer_list").children[id].classList.add("sidebar_button--selected");
+    // $("#dancer_list").children[id].append(this.editDancerListItem);
   }
 }

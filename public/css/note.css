@@ -127,8 +127,10 @@
   transform-style: preserve-3d;
   cursor: grab;
 }
-.dancer:active {
-  cursor: grabbing !important;
+
+.dancer--selected {
+  outline: dashed var(--color-brand);
+  border-radius: 15px;
 }
 
 .up {

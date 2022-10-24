@@ -28,7 +28,8 @@ const state = {
   isMusicPlaying: false,
   selectedBoxIdx: -1,
   gap: 30,
-  copiedFormation: []
+  copiedFormation: [],
+  selectedDancer: -1,
 }
 
 let musicFile;
@@ -200,6 +201,7 @@ function init() {
     deleteDancer,
     changeDancerName,
     changeDancerColor,
+    selectDancer,
   });
   
   setCurTime(0);
@@ -213,6 +215,18 @@ function init() {
   const $saveBtn = document.getElementById("save_btn");
   $saveBtn.onclick = saveFile;
   */
+}
+
+function selectDancer(id) {
+  if(state.selectedDancer != -1) {
+    sideScreen.unselect(state.selectedDancer);
+    stage.unselectDancer(state.selectedDancer);
+  }
+  state.selectedDancer = id;
+  if (id != -1) {
+  	sideScreen.select(id);
+    stage.selectDancer(id);
+  }
 }
 
 function saveFile() {
