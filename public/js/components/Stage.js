@@ -6,7 +6,7 @@ const TAG = "Stage.js/";
 export default class Stage {
   #curPos;
 
-  constructor({ dancerArray, formationArray, gap }) {
+  constructor({ dancerArray, formationArray, gap, selectDancer }) {
     this.gap = gap;
     this.formationBoxIdx = 0;
     this.dancerArray = dancerArray;
@@ -18,10 +18,16 @@ export default class Stage {
     this.isBoxSelected = false;
     this.isMusicPlaying = false;
     this.nameIsShown = false;
+    this.selectDancer = selectDancer;
 
     this.$stageSection = $("#stage_section");
     this.$stageWrap = $("#stage_wrap");
 
+    this.$stageSection.onclick = e => {
+    	e.stopPropagation();
+      selectDancer(-1);
+    }
+    
     /* COORDINATE */
     this.$stageAxis = $("#stage_axis");
     this.$stageAxis.setAttribute("id", "stage_axis");
@@ -63,7 +69,7 @@ export default class Stage {
     this.$stageDancer = $("#stage_dancer");
     this.$stageDancer.ondragover = e => e.preventDefault();
     this.dancerArray.forEach((dancer, idx) => {
-      const dancerObj = new Dancer({ dancer, position: this.#curPos[idx], gap });
+      const dancerObj = new Dancer({ dancer, position: this.#curPos[idx], gap, selectDancer: this.selectDancer });
       this.dancerObjArray.push(dancerObj);
       this.$stageDancer.appendChild(dancerObj.$dancer);
     });
@@ -234,7 +240,7 @@ export default class Stage {
 
   addDancer(id) {
     const dancer = this.dancerArray[id];
-    const dancerObj = new Dancer({ dancer, position: this.#curPos[id], gap: this.gap });
+    const dancerObj = new Dancer({ dancer, position: this.#curPos[id], gap: this.gap, selectDancer: this.selectDancer });
     this.dancerObjArray.push(dancerObj);
     this.$stageDancer.appendChild(dancerObj.$dancer);
     this.evalDraggable({});
@@ -249,11 +255,11 @@ export default class Stage {
     });
   }
   
-  selectDancer(id) {
+  select(id) {
     this.dancerObjArray[id].select();
   }
   
-  unselectDancer(id) {
+  unselect(id) {
     this.dancerObjArray[id].unselect();
   }
 }

@@ -81,7 +81,6 @@ export default class SideScreen {
       
       $dancerButton.onclick = e => {
         e.stopPropagation();
-        console.log("선택", dancer.id);
         selectDancer(dancer.id);
       }
       

@@ -4,7 +4,7 @@ import Toast from "./Toast.js";
 const TAG = "Dancer.js/";
 
 export default class Dancer {
-  constructor({ dancer, position, gap }) {
+  constructor({ dancer, position, gap, selectDancer }) {
     this.dancer = dancer;
     this.draggable = false;
     this.position = position;
@@ -20,6 +20,11 @@ export default class Dancer {
     this.$dancer.style.transitionDuration = "100ms";
     this.isSnap = false;
     this.reason = "";
+    
+    this.$dancer.onclick = e => {
+      e.stopPropagation();
+      selectDancer(dancer.id);
+    }
 
     // 윗면
     const $up = document.createElement("div");
@@ -30,7 +35,6 @@ export default class Dancer {
     this.$dancer.appendChild($up);
 
     // SIDE
-    
     this.getSideColor = (hexColor) => {
       console.log(hexColor);
       const magnitude = -20;

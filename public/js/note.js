@@ -170,7 +170,8 @@ function init() {
   stage = new Stage({
     dancerArray: state.dancerArray,
     formationArray: state.formationArray,
-    gap: state.gap
+    gap: state.gap,
+    selectDancer
   });
 
   musicPlayer = new MusicPlayer({
@@ -220,12 +221,12 @@ function init() {
 function selectDancer(id) {
   if(state.selectedDancer != -1) {
     sideScreen.unselect(state.selectedDancer);
-    stage.unselectDancer(state.selectedDancer);
+    stage.unselect(state.selectedDancer);
   }
   state.selectedDancer = id;
   if (id != -1) {
   	sideScreen.select(id);
-    stage.selectDancer(id);
+    stage.select(id);
   }
 }
 
