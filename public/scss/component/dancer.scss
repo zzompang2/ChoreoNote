@@ -10,11 +10,11 @@
   transition-timing-function: ease-in-out;
   transform-style: preserve-3d;
   cursor: grab;
+  border-radius: 15px;
 }
 
 .dancer--selected {
   outline: dashed var(--color-brand);
-  border-radius: 15px;
 }
 
 .up {

@@ -57,8 +57,20 @@ router.get('/info', async (req, res, next) => {
       "SELECT * FROM note WHERE id = ?;",
       [id]
     );
+    const [ dancers ] = await connection.query(
+      "SELECT id, name, color FROM dancer WHERE nid = ?;",
+      [id]
+    );
+    const [ times ] = await connection.query(
+      "SELECT id, start, duration FROM time WHERE nid = ? ORDER BY start;",
+      [id]
+    );
+    const [ postions ] = await connection.query(
+      "SELECT tid, did, x, y FROM pos WHERE nid = ?;",
+      [id]
+    );
     
-    res.send({ note });
+    res.send({ note, dancers, times, postions });
     
   } catch (err) {
     console.error(err);

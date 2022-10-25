@@ -44,7 +44,7 @@ export default class SideScreen {
       const $dancerButton = $("div.sidebar_button");
       const $dancerIndex = $(
         "label.sidebar_button__dancerIndex",
-        { textNode: dancer.id+1 }
+        { textNode: dancer.id }
       );
       $dancerIndex.style.backgroundColor = dancer.color;
       const $colorInput = $(
@@ -120,11 +120,11 @@ export default class SideScreen {
   }
   
   unselect(id) {
-    $("#dancer_list").children[id].classList.remove("sidebar_button--selected");
+    $("#dancer_list").children[id-1].classList.remove("sidebar_button--selected");
   }
   
   select(id) {
-    $("#dancer_list").children[id].classList.add("sidebar_button--selected");
+    $("#dancer_list").children[id-1].classList.add("sidebar_button--selected");
     // $("#dancer_list").children[id].append(this.editDancerListItem);
   }
 }

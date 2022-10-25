@@ -15,8 +15,8 @@ export default class Dancer {
     this.$dancer.ondragstart = e => dragStart(e);
     this.$dancer.ondrag = e => drag(e);
     this.$dancer.ondragend = e => dragEnd(e);
-    this.$dancer.style.left = STAGE_WIDTH/2 + position.posx + "px";
-    this.$dancer.style.top = STAGE_HEIGHT/2 + position.posy + "px";
+    this.$dancer.style.left = STAGE_WIDTH/2 + position.x + "px";
+    this.$dancer.style.top = STAGE_HEIGHT/2 + position.y + "px";
     this.$dancer.style.transitionDuration = "100ms";
     this.isSnap = false;
     this.reason = "";
@@ -30,13 +30,12 @@ export default class Dancer {
     const $up = document.createElement("div");
     $up.className = "up";
     $up.style.backgroundColor = dancer.color;
-    const $textNode = document.createTextNode(dancer.id+1);  // 표시할 숫자는 id+1
+    const $textNode = document.createTextNode(dancer.id);
     $up.appendChild($textNode);
     this.$dancer.appendChild($up);
 
     // SIDE
     this.getSideColor = (hexColor) => {
-      console.log(hexColor);
       const magnitude = -20;
       hexColor = hexColor.replace(`#`, ``);
       if (hexColor.length === 6) {
@@ -51,7 +50,7 @@ export default class Dancer {
         b > 255 && (b = 255);
         b < 0 && (b = 0);
         let result = (g | (b << 8) | (r << 16)).toString(16);
-        console.log(result);
+
         while(result.length !== 6) {
           result = "0" + result;
         }
@@ -92,9 +91,9 @@ export default class Dancer {
 
     const drag = e => {
       if(this.isSnap) {
-        const newX = roundPos(this.position.posx + e.clientX - initialPos.x, gap);
-        const newY = roundPos(this.position.posy + e.clientY - initialPos.y, gap);
-        e.target.style.transform = `translate(${newX - this.position.posx}px, ${newY - this.position.posy}px)`;
+        const newX = roundPos(this.position.x + e.clientX - initialPos.x, gap);
+        const newY = roundPos(this.position.y + e.clientY - initialPos.y, gap);
+        e.target.style.transform = `translate(${newX - this.position.x}px, ${newY - this.position.y}px)`;
       }
       else
       e.target.style.transform = `translate(${e.clientX - initialPos.x}px, ${e.clientY - initialPos.y}px)`;
@@ -103,16 +102,16 @@ export default class Dancer {
 
     const dragEnd = e => {
       // 실제 formationArray 배열의 값이 변경됨!
-      let newX = this.position.posx + (e.clientX - initialPos.x);
-      let newY = this.position.posy + (e.clientY - initialPos.y);
+      let newX = this.position.x + (e.clientX - initialPos.x);
+      let newY = this.position.y + (e.clientY - initialPos.y);
 
       if(this.isSnap) {
         newX = roundPos(newX, gap);
         newY = roundPos(newY, gap);
       }
 
-      this.position.posx = newX;
-      this.position.posy = newY;
+      this.position.x = newX;
+      this.position.y = newY;
 
       // 실제 위치 이동
       e.target.style.transform = null;
@@ -130,14 +129,14 @@ export default class Dancer {
 
   setPosition(pos) {
     this.position = pos;
-    this.$dancer.style.left = STAGE_WIDTH/2 + pos.posx + "px";
-    this.$dancer.style.top = STAGE_HEIGHT/2 + pos.posy + "px";
+    this.$dancer.style.left = STAGE_WIDTH/2 + pos.x + "px";
+    this.$dancer.style.top = STAGE_HEIGHT/2 + pos.y + "px";
   }
 
   move(destPos, duration) {
     this.$dancer.style.transitionDuration = duration + "ms";
-    this.$dancer.style.left = STAGE_WIDTH/2 + destPos.posx + "px";
-    this.$dancer.style.top = STAGE_HEIGHT/2 + destPos.posy + "px";
+    this.$dancer.style.left = STAGE_WIDTH/2 + destPos.x + "px";
+    this.$dancer.style.top = STAGE_HEIGHT/2 + destPos.y + "px";
   }
 
   stop() {
@@ -165,7 +164,7 @@ export default class Dancer {
       this.$dancer.firstChild.classList.add("name");
     }
     else {
-      this.$dancer.firstChild.innerText = this.dancer.id+1;
+      this.$dancer.firstChild.innerText = this.dancer.id;
       this.$dancer.firstChild.classList.remove("name");
     }
   }
@@ -189,9 +188,9 @@ export default class Dancer {
 
   decreaseId(nameIsShown) {
     // this.dancer.id--;
-    this.$dancer.id = this.dancer.id;
+    this.$dancer.id = this.dancer.id-1;
     if(!nameIsShown)
-    this.$dancer.firstChild.innerText = this.dancer.id+1;
+    this.$dancer.firstChild.innerText = this.dancer.id;
   }
   
   select() {

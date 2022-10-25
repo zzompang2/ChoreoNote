@@ -40,33 +40,30 @@ const noteId = new URL(location).searchParams.get("id");
 
 axios.get(`/note/info?id=${noteId}`)
 .then(res => {
-  const { note } = res.data;
-  console.log(note);
-  createNote(note);
+  const { note, dancers, times, postions } = res.data;
+  createNote(note, dancers, times, postions);
 })
 .catch(err => {
   console.error(err);
 });
 
-function createNote(note) {
+function createNote(note, dancers, times, postions) {
   state.noteTitle = note.title;
-  state.dancerArray = [{ id: 0, name: "햄", color: "#ff631b" }, { id: 1, name: "팡이", color: "#8249d3" }];
-  state.formationArray = [
-    {
-      time: 0, duration: 2000,
-      positionsAtSameTime: [
-        { did: 0, posx: -50, posy: 0},
-        { did: 1, posx: 50, posy: 0}
-      ]
-    },
-    {
-      time: 6000, duration: 3000,
-      positionsAtSameTime: [
-        { did: 0, posx: -50, posy: 50},
-        { did: 1, posx: 50, posy: 50}
-      ]
-    }
-  ];
+  state.dancerArray = dancers.map(dancer => ({...dancer, color: "#" + dancer.color}));
+  state.formationArray = times.map(time => ({
+    id: time.id,
+    time: time.start,
+    duration: time.duration,
+    positionsAtSameTime: []
+  }));
+  
+  postions.forEach(position => {
+    const index = state.formationArray.findIndex(elem => elem.id == position.tid);
+  	state.formationArray[index].positionsAtSameTime.push(position);
+  });
+  
+  console.log(state.formationArray);
+    
   init();
 }
 
@@ -620,7 +617,7 @@ function addDancer() {
     color: "#ff631b"
   });
   state.formationArray.forEach(formation => {
-    formation.positionsAtSameTime.push({ did: id, posx: 0, posy: 0 });
+    formation.positionsAtSameTime.push({ did: id, x: 0, y: 0 });
   });
   stage.stopAndSetPosition(state.curTime);
   stage.addDancer(id);

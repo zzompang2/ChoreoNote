@@ -38,11 +38,43 @@ const getRandomTitle = () => {
 
 router.get('/create_note', isLoggedIn, async (req, res, next) => {
   try {
-  	const [ rows ] = await connection.query(
+  	const [{ insertId: noteId }] = await connection.query(
       "INSERT INTO note (uid, title) VALUES (?, ?);",
       [req.user.id, getRandomTitle() ]
     );
-    res.send({ noteId: rows.insertId });
+    await connection.query(
+      "INSERT INTO dancer (nid, id, name, color) VALUES (?, ?, ?, ?);",
+      [noteId, 1, "Ham", "ff631b" ]
+    );
+    await connection.query(
+      "INSERT INTO dancer (nid, id, name, color) VALUES (?, ?, ?, ?);",
+      [noteId, 2, "Lulu", "8249d3" ]
+    );
+    await connection.query(
+      "INSERT INTO time (nid, id, start, duration) VALUES (?, ?, ?, ?);",
+      [noteId, 1, 0, 2000 ]
+    );
+    await connection.query(
+      "INSERT INTO time (nid, id, start, duration) VALUES (?, ?, ?, ?);",
+      [noteId, 2, 5000, 3000 ]
+    );
+    await connection.query(
+      "INSERT INTO pos (nid, tid, did, x, y) VALUES (?, ?, ?, ?, ?);",
+      [noteId, 1, 1, -100, 0 ]
+    );
+    await connection.query(
+      "INSERT INTO pos (nid, tid, did, x, y) VALUES (?, ?, ?, ?, ?);",
+      [noteId, 1, 2, 100, 0 ]
+    );
+    await connection.query(
+      "INSERT INTO pos (nid, tid, did, x, y) VALUES (?, ?, ?, ?, ?);",
+      [noteId, 2, 1, -100, 50 ]
+    );
+    await connection.query(
+      "INSERT INTO pos (nid, tid, did, x, y) VALUES (?, ?, ?, ?, ?);",
+      [noteId, 2, 2, 100, 50 ]
+    );
+    res.send({ noteId });
   } catch (err) {
     console.error(err);
     next(err);

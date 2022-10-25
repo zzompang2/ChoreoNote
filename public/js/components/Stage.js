@@ -68,6 +68,7 @@ export default class Stage {
     /* STAGE */
     this.$stageDancer = $("#stage_dancer");
     this.$stageDancer.ondragover = e => e.preventDefault();
+    console.log(this.dancerArray);
     this.dancerArray.forEach((dancer, idx) => {
       const dancerObj = new Dancer({ dancer, position: this.#curPos[idx], gap, selectDancer: this.selectDancer });
       this.dancerObjArray.push(dancerObj);
@@ -111,7 +112,7 @@ export default class Stage {
 
   moveDancers(destPos, duration) {
     const toPos = destPos.positionsAtSameTime;
-    this.dancerObjArray.forEach((dancer, did) => dancer.move(toPos[did], duration));
+    this.dancerObjArray.forEach((dancer, index) => dancer.move(toPos[index], duration));
   }
 
   stopAndSetPosition(ms) {
@@ -135,11 +136,11 @@ export default class Stage {
           const prevBoxPosition = this.formationArray[i-1].positionsAtSameTime;
           const prevBoxEndTime = this.formationArray[i-1].time + this.formationArray[i-1].duration
           const ratio = (ms - prevBoxEndTime) / (this.formationArray[i].time - prevBoxEndTime);
-          newPos = this.formationArray[i].positionsAtSameTime.map(({ did, posx, posy }) =>
+          newPos = this.formationArray[i].positionsAtSameTime.map(({ did, x, y }) =>
           ({
             did,
-            posx: prevBoxPosition[did].posx + (posx - prevBoxPosition[did].posx) * ratio,
-            posy: prevBoxPosition[did].posy + (posy - prevBoxPosition[did].posy) * ratio
+            x: prevBoxPosition[did-1].x + (x - prevBoxPosition[did-1].x) * ratio,
+            y: prevBoxPosition[did-1].y + (y - prevBoxPosition[did-1].y) * ratio
           }));
         }
         break;
@@ -256,10 +257,10 @@ export default class Stage {
   }
   
   select(id) {
-    this.dancerObjArray[id].select();
+    this.dancerObjArray[id-1].select();
   }
   
   unselect(id) {
-    this.dancerObjArray[id].unselect();
+    this.dancerObjArray[id-1].unselect();
   }
 }

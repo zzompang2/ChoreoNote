@@ -25,7 +25,7 @@ function executeQuerys() {
     `DROP TABLE IF EXISTS note;`,
     `DROP TABLE IF EXISTS dancer;`,
     `DROP TABLE IF EXISTS time;`,
-    `DROP TABLE IF EXISTS coordinate;`,
+    `DROP TABLE IF EXISTS pos;`,
   ];
 
   const createQuerys = [
@@ -56,8 +56,8 @@ function executeQuerys() {
     CREATE TABLE IF NOT EXISTS dancer (
     nid       INT NOT NULL,
     id        INT NOT NULL,
-    name      INT NOT NULL,
-    color   	CHAR(6),
+    name      VARCHAR(20),
+    color   	CHAR(6) NOT NULL,
     createdAt DATETIME NOT NULL DEFAULT now(),
     PRIMARY KEY(nid, id),
     FOREIGN KEY(nid) REFERENCES note(id)
@@ -73,7 +73,7 @@ function executeQuerys() {
     FOREIGN KEY(nid) REFERENCES note(id)
     );`,
     `
-    CREATE TABLE IF NOT EXISTS coordinate (
+    CREATE TABLE IF NOT EXISTS pos (
     nid       INT NOT NULL,
     tid       INT NOT NULL,
     did       INT NOT NULL,
