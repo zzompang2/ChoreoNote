@@ -40,7 +40,7 @@ axios.get('/dashboard/get_notes')
     </div>
     `);
     
-    $note.onclick = () => $("a", { href: `/note?id=${note.id}` }).click();
+    $note.onclick = () => $("a", { href: `/note?id=${note.noteId}` }).click();
     fragment.append($note);
   });
   $("#note_container").append(fragment);

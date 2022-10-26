@@ -49,7 +49,7 @@ axios.get(`/note/info?id=${noteId}`)
 
 function createNote(note, dancers, times, postions) {
   state.noteTitle = note.title;
-  state.dancerArray = dancers.map(dancer => ({...dancer, color: "#" + dancer.color}));
+  state.dancerArray = dancers;
   state.formationArray = times.map(time => ({
     id: time.id,
     time: time.start,
@@ -222,8 +222,29 @@ function init() {
     window.location.reload();
   };
   */
-  const $saveFileButton = $("#save_file_button");
-  $saveFileButton.onclick = saveFile;
+  $("#save_file_button").onclick = saveFile;
+  $("#save_button").onclick = saveNoteDB; 
+}
+
+let saveNoteDB_block = false;
+function saveNoteDB() {
+  if (saveNoteDB_block) return;
+  saveNoteDB_block = true;
+  
+  axios.post('/note/update', {
+    noteId,
+    dancerArray: state.dancerArray,
+    formationArray: state.formationArray,
+    musicInfo: state.musicInfo
+  })
+  .then(res => {
+    console.log(res.data);
+  })
+  .catch(err => {
+    console.error(err);
+  })
+  console.log(state.dancerArray, state.formationArray, state.musicInfo);
+  saveNoteDB_block = false;
 }
 
 function selectDancer(id) {
@@ -641,12 +662,12 @@ function deleteDancer(id) {
 }
 
 function changeDancerName(id, name) {
-  state.dancerArray[id].name = name;
+  state.dancerArray[id-1].name = name;
   stage.changeName(id, name);
 }
 
 function changeDancerColor(id, color) {
-  state.dancerArray[id].color = color;
+  state.dancerArray[id-1].color = color;
   stage.changeColor(id);
 }
 

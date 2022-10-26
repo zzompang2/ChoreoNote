@@ -43,12 +43,14 @@ function executeQuerys() {
     `
     CREATE TABLE IF NOT EXISTS note (
     id        INT NOT NULL AUTO_INCREMENT,
+    noteId    INT,
     uid       INT NOT NULL,
     title     VARCHAR(30) NOT NULL,
     music     VARCHAR(50),
     duration  INT NOT NULL DEFAULT 30000,
     editedAt  DATETIME NOT NULL DEFAULT now(),
     createdAt DATETIME NOT NULL DEFAULT now(),
+    hide      BOOLEAN DEFAULT false,
     PRIMARY KEY(id),
     FOREIGN KEY(uid) REFERENCES user(id)
     );`,
@@ -57,7 +59,7 @@ function executeQuerys() {
     nid       INT NOT NULL,
     id        INT NOT NULL,
     name      VARCHAR(20),
-    color   	CHAR(6) NOT NULL,
+    color   	CHAR(7) NOT NULL,
     createdAt DATETIME NOT NULL DEFAULT now(),
     PRIMARY KEY(nid, id),
     FOREIGN KEY(nid) REFERENCES note(id)

@@ -43,36 +43,41 @@ router.get('/create_note', isLoggedIn, async (req, res, next) => {
       [req.user.id, getRandomTitle() ]
     );
     await connection.query(
+      "UPDATE note SET noteId = ? WHERE id = ?;",
+      [ noteId, noteId ]
+    );
+
+    await connection.query(
       "INSERT INTO dancer (nid, id, name, color) VALUES (?, ?, ?, ?);",
-      [noteId, 1, "Ham", "ff631b" ]
+      [ noteId, 1, "Ham", "#ff631b" ]
     );
     await connection.query(
       "INSERT INTO dancer (nid, id, name, color) VALUES (?, ?, ?, ?);",
-      [noteId, 2, "Lulu", "8249d3" ]
+      [ noteId, 2, "Lulu", "#8249d3" ]
     );
     await connection.query(
       "INSERT INTO time (nid, id, start, duration) VALUES (?, ?, ?, ?);",
-      [noteId, 1, 0, 2000 ]
+      [ noteId, 1, 0, 2000 ]
     );
     await connection.query(
       "INSERT INTO time (nid, id, start, duration) VALUES (?, ?, ?, ?);",
-      [noteId, 2, 5000, 3000 ]
+      [ noteId, 2, 5000, 3000 ]
     );
     await connection.query(
       "INSERT INTO pos (nid, tid, did, x, y) VALUES (?, ?, ?, ?, ?);",
-      [noteId, 1, 1, -100, 0 ]
+      [ noteId, 1, 1, -100, 0 ]
     );
     await connection.query(
       "INSERT INTO pos (nid, tid, did, x, y) VALUES (?, ?, ?, ?, ?);",
-      [noteId, 1, 2, 100, 0 ]
+      [ noteId, 1, 2, 100, 0 ]
     );
     await connection.query(
       "INSERT INTO pos (nid, tid, did, x, y) VALUES (?, ?, ?, ?, ?);",
-      [noteId, 2, 1, -100, 50 ]
+      [ noteId, 2, 1, -100, 50 ]
     );
     await connection.query(
       "INSERT INTO pos (nid, tid, did, x, y) VALUES (?, ?, ?, ?, ?);",
-      [noteId, 2, 2, 100, 50 ]
+      [ noteId, 2, 2, 100, 50 ]
     );
     res.send({ noteId });
   } catch (err) {
@@ -83,9 +88,10 @@ router.get('/create_note', isLoggedIn, async (req, res, next) => {
 
 router.get('/get_notes', isLoggedIn, async (req, res, next) => {
   try {
-  	const [ notes ] = await connection.query(
-      `SELECT *, DATE_FORMAT(createdAt, '%Y.%m.%d') AS createdAt FROM note WHERE uid = ?;`,
-      [req.user.id]);
+  	const [ notes ] = await connection.query(`
+    	SELECT *, DATE_FORMAT(createdAt, '%Y.%m.%d') AS createdAt
+      FROM note WHERE uid = ? AND hide = ?;`,
+      [req.user.id, false]);
     res.send({ notes });
   } catch (err) {
     console.error(err);

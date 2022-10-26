@@ -232,11 +232,11 @@ export default class Stage {
   }
 
   changeName(id, name) {
-    this.dancerObjArray[id].changeName(name, this.nameIsShown);
+    this.dancerObjArray[id-1].changeName(name, this.nameIsShown);
   }
 
   changeColor(id) {
-    this.dancerObjArray[id].changeColor();
+    this.dancerObjArray[id-1].changeColor();
   }
 
   addDancer(id) {
