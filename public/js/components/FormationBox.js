@@ -10,13 +10,13 @@ export default class FormationBox {
     this.$box.id = id;
     this.$box.className = "formationBox";
     this.$box.style.width = formationInfo.duration / 1000 * PIXEL_PER_SEC + "px";
-    this.$box.style.left = TIMELINE_PADDING + formationInfo.time / 1000 * PIXEL_PER_SEC + "px";
-
+    this.$box.style.left = TIMELINE_PADDING + formationInfo.start / 1000 * PIXEL_PER_SEC + "px";
     const $body = document.createElement("div");
     $body.className = "formationBox__body";
     $body.draggable = true;
     $body.onclick = e => {
       e.stopPropagation();  // $bg 클릭 방지
+      console.log("box 클릭", this.id);
       selectFormationBox(this.id);
     }
 
@@ -36,8 +36,8 @@ export default class FormationBox {
       this.$box.style.transform = null;
       // new TIME 계산
       const offset = e.clientX - initialX;
-      const newTime = formationInfo.time + roundTime(offset / PIXEL_PER_SEC * 1000);
-      changeFormationTimeAndDuration({ id: this.id, time: newTime });
+      const newTime = formationInfo.start + roundTime(offset / PIXEL_PER_SEC * 1000);
+      changeFormationTimeAndDuration({ id: this.id, start: newTime });
     }
     
     const $handlerLeft = document.createElement("div");
@@ -61,9 +61,9 @@ export default class FormationBox {
       this.$box.style.width = formationInfo.duration / 1000 * PIXEL_PER_SEC + "px";
       // new TIME & DURATION 계산
       const offset = e.clientX - initialX;
-      const newTime = formationInfo.time + roundTime(offset / PIXEL_PER_SEC * 1000);
+      const newTime = formationInfo.start + roundTime(offset / PIXEL_PER_SEC * 1000);
       const newDuration = formationInfo.duration - roundTime(offset / PIXEL_PER_SEC * 1000);
-      changeFormationTimeAndDuration({ id: this.id, time: newTime, duration: newDuration });
+      changeFormationTimeAndDuration({ id: this.id, start: newTime, duration: newDuration });
     }
 
     const $handlerRight = document.createElement("div");
@@ -106,7 +106,7 @@ export default class FormationBox {
   }
 
   updateFormationBox() {
-    this.$box.style.left = TIMELINE_PADDING + this.formationInfo.time / 1000 * PIXEL_PER_SEC + "px";
+    this.$box.style.left = TIMELINE_PADDING + this.formationInfo.start / 1000 * PIXEL_PER_SEC + "px";
     this.$box.style.width = this.formationInfo.duration / 1000 * PIXEL_PER_SEC + "px";
   }
 }

@@ -27,7 +27,7 @@ export default class Stage {
     	e.stopPropagation();
       selectDancer(-1);
     }
-    
+        
     /* COORDINATE */
     this.$stageAxis = $("#stage_axis");
     this.$stageAxis.setAttribute("id", "stage_axis");
@@ -68,10 +68,9 @@ export default class Stage {
     /* STAGE */
     this.$stageDancer = $("#stage_dancer");
     this.$stageDancer.ondragover = e => e.preventDefault();
-    console.log(this.dancerArray);
     this.dancerArray.forEach((dancer, idx) => {
-      const dancerObj = new Dancer({ dancer, position: this.#curPos[idx], gap, selectDancer: this.selectDancer });
-      this.dancerObjArray.push(dancerObj);
+      const dancerObj = new Dancer({ dancer, position: this.#curPos[dancer.id], gap, selectDancer: this.selectDancer });
+      this.dancerObjArray[dancer.id] = dancerObj;
       this.$stageDancer.appendChild(dancerObj.$dancer);
     });
 
@@ -112,13 +111,15 @@ export default class Stage {
 
   moveDancers(destPos, duration) {
     const toPos = destPos.positionsAtSameTime;
-    this.dancerObjArray.forEach((dancer, index) => dancer.move(toPos[index], duration));
+    this.dancerObjArray.forEach(dancer => dancer.move(toPos[dancer.dancer.id], duration));
   }
 
   stopAndSetPosition(ms) {
     this.#curPos = this.calcPositionAt(ms);
     this.dancerObjArray.forEach(dancer => dancer.stop());
-    this.dancerObjArray.forEach((dancer, did) => dancer.setPosition(this.#curPos[did]));
+    this.dancerObjArray.forEach(dancer => {
+      dancer.setPosition(this.#curPos[dancer.dancer.id]);
+    });
   }
 
   calcPositionAt(ms) {
@@ -126,21 +127,21 @@ export default class Stage {
   
     for(let i in this.formationArray) {
       // i BOX 내부이거나 왼쪽인 경우
-      if(ms <= this.formationArray[i].time + this.formationArray[i].duration) {
+      if(ms <= this.formationArray[i].start + this.formationArray[i].duration) {
         // BOX 내부에 걸친 경우 || 첫번째 BOX 보다 왼쪽인 경우
-        if(this.formationArray[i].time <= ms || i == 0) {
+        if(this.formationArray[i].start <= ms || i == 0) {
           newPos = this.formationArray[i].positionsAtSameTime;
         }
         // BOX 보다 왼쪽인 경우
         else {
           const prevBoxPosition = this.formationArray[i-1].positionsAtSameTime;
-          const prevBoxEndTime = this.formationArray[i-1].time + this.formationArray[i-1].duration
-          const ratio = (ms - prevBoxEndTime) / (this.formationArray[i].time - prevBoxEndTime);
+          const prevBoxEndTime = this.formationArray[i-1].start + this.formationArray[i-1].duration;
+          const ratio = (ms - prevBoxEndTime) / (this.formationArray[i].start - prevBoxEndTime);
           newPos = this.formationArray[i].positionsAtSameTime.map(({ did, x, y }) =>
           ({
             did,
-            x: prevBoxPosition[did-1].x + (x - prevBoxPosition[did-1].x) * ratio,
-            y: prevBoxPosition[did-1].y + (y - prevBoxPosition[did-1].y) * ratio
+            x: prevBoxPosition[did].x + (x - prevBoxPosition[did].x) * ratio,
+            y: prevBoxPosition[did].y + (y - prevBoxPosition[did].y) * ratio
           }));
         }
         break;
@@ -228,21 +229,22 @@ export default class Stage {
   }
 
   snap(bool) {
-    this.dancerObjArray.forEach(dancer => dancer.snap(bool));
+    this.dancerObjArray.forEach($dancer => $dancer.snap(bool));
   }
 
-  changeName(id, name) {
-    this.dancerObjArray[id-1].changeName(name, this.nameIsShown);
+  changeName(did, name) {
+    this.dancerObjArray[did].changeName(name, this.nameIsShown);
   }
 
-  changeColor(id) {
-    this.dancerObjArray[id-1].changeColor();
+  changeColor(did) {
+    console.log(did, this.dancerObjArray);
+    this.dancerObjArray[did].changeColor();
   }
 
-  addDancer(id) {
-    const dancer = this.dancerArray[id];
-    const dancerObj = new Dancer({ dancer, position: this.#curPos[id], gap: this.gap, selectDancer: this.selectDancer });
-    this.dancerObjArray.push(dancerObj);
+  addDancer(did) {
+    const dancer = this.dancerArray[did];
+    const dancerObj = new Dancer({ dancer, position: this.#curPos[did], gap: this.gap, selectDancer: this.selectDancer });
+    this.dancerObjArray[did] = dancerObj;
     this.$stageDancer.appendChild(dancerObj.$dancer);
     this.evalDraggable({});
   }
@@ -251,16 +253,16 @@ export default class Stage {
     const target = this.dancerObjArray.splice(id, 1)[0];
     this.$stageDancer.removeChild(target.$dancer);
     this.dancerObjArray.forEach(dancer => {
-      if(dancer.id > id)
+      if(dancer.dancer.id >= id)
       dancer.decreaseId(this.nameIsShown);
     });
   }
   
-  select(id) {
-    this.dancerObjArray[id-1].select();
+  select(did) {
+    this.dancerObjArray[did].select();
   }
   
-  unselect(id) {
-    this.dancerObjArray[id-1].unselect();
+  unselect(did) {
+    this.dancerObjArray[did].unselect();
   }
 }

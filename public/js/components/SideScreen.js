@@ -42,19 +42,20 @@ export default class SideScreen {
     this.createDancerButtonElem = function(dancer) {
       const $dancerButtonContainer = $("div.sidebar_container");
       const $dancerButton = $("div.sidebar_button");
+      const $dancerIcon = $("label.sidebar_button__dancerIcon");
       const $dancerIndex = $(
-        "label.sidebar_button__dancerIndex",
+        "div.dancer_index",
         { textNode: dancer.id }
       );
-      $dancerIndex.style.backgroundColor = dancer.color;
+      $dancerIcon.style.backgroundColor = dancer.color;
       const $colorInput = $(
         "input.sidebar_button__colorInput",
         { type: "color", value: dancer.color });
-      $dancerIndex.append($colorInput);
+      $dancerIcon.append($dancerIndex, $colorInput);
 
       $colorInput.onchange = e => {
         changeDancerColor(dancer.id, e.target.value);
-        $dancerIndex.style.backgroundColor = e.target.value;
+        $dancerIcon.style.backgroundColor = e.target.value;
       }
       
       const $name = $(
@@ -80,7 +81,7 @@ export default class SideScreen {
         deleteDancer(dancer.id);
       }
 
-      $dancerButton.append($dancerIndex, $name, $deleteButton);
+      $dancerButton.append($dancerIcon, $name, $deleteButton);
       $dancerButtonContainer.append($dancerButton);
       
       $dancerButton.onclick = e => {
@@ -112,10 +113,11 @@ export default class SideScreen {
     this.$sideScreen.querySelector("#dancer_list").append(this.createDancerButtonElem(dancer));
   }
 
-  removeDancer(id) {
-    this.$sideScreen.lastChild.removeChild(this.$sideScreen.lastChild.children[id]);
-    [...this.$sideScreen.lastChild.children].forEach(($elem, id) => {
-      $elem.firstChild.innerText = id+1;
+  removeDancer(did) {
+    const dancerList = this.$sideScreen.querySelector("#dancer_list");
+    dancerList.removeChild(dancerList.children[did-1]);
+    [...dancerList.children].forEach(($elem, id) => {
+      $elem.querySelector(".dancer_index").textContent = id+1;
     });
   }
   

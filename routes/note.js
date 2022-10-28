@@ -81,7 +81,7 @@ router.get('/info', async (req, res, next) => {
 
 router.post('/update', isLoggedIn, async (req, res, next) => {
   try {
-    const { noteId, dancerArray, formationArray, musicInfo } = req.body;
+    const { noteId, dancerArray, formationArray, noteInfo } = req.body;
 
     // 기존 노트 정보 가져오기
     const [[ originNote ]] = await connection.query(
