@@ -3,40 +3,39 @@
   <head>
     <title>Choreo Note</title>
     <meta charset="utf-8">
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/home.css">
   </head>
   <body>
-    <section id="start_section">
-      <div id="start" class="bg">
-        <div class="title">Choreo Note</div>
-        <div class="description">당신의 멋진 무대를 위해.</div>
-        <form id="login_form" action="/auth/login" method="post">
-          <div class="row">
-            <label for="email">이메일</label>
-            <input id="email" name="email" type="email" maxlength="40" required autofocus>
-          </div>
-          <div class="row">
-            <label for="password">비밀번호</label>
-            <input id="password" name="password" type="password" required autofocus>
-          </div>
-          <a id="join_btn" href="/join" class="btn">회원가입</a>
-          <button id="login_btn" type="submit" class="btn">로그인</button>
-        </form>
-        
-        <div id="create_btn" class="btn">새로 만들기</div>
-        <label id="file_btn" class="btn" for="input_file">불러오기</label>
-        <input type="file" id="input_file" style="display: none">
-        <input type="file" id="input_musicfile" style="display: none">
-        <a id="comment_btn" class="btn" href="https://blog.naver.com/zzompang2/222732715519" target="_blank">방명록</a>
-      	<a class="login_btn" href="/auth/kakao">
-          <img src="/assets/image/kakao_login_large_wide.png" alt="login img" />
-        </a>
-        <a class="login_btn" href="/auth/google">
-          <img src="/assets/image/google_login.png" alt="login img" />
-        </a>
-      </div>
+    <section class="main_section">
+      <section class="banner">
+      	<div class="logo"></div>
+        <div class="banner__title">당신의 멋진 무대를 위해.</div>
+      </section>
+      <section class="login_section">
+        <div class="login_container">
+          <form id="login_form" action="/auth/login" method="post">
+            <div class="login__inputContainer">
+              <label class="login__label" for="email">이메일</label>
+              <input class="login__input" id="email" name="email" type="email" maxlength="40" required autofocus>
+            </div>
+            <div class="login__inputContainer">
+              <label class="login__label" for="password">비밀번호</label>
+              <input class="login__input" id="password" name="password" type="password" required autofocus>
+            </div>
+            <div class="login__buttonContainer">
+              <a href="/join" class="login__button">회원가입</a>
+              <button type="submit" class="login__button">로그인</button>
+          	</div>
+          </form>
+
+          <a class="login__snsButton" href="/auth/kakao">
+            <img src="/assets/image/kakao_login_large_wide.png" alt="login img" />
+          </a>
+          <a class="login__snsButton" href="/auth/google">
+            <img src="/assets/image/google_login.png" alt="login img" />
+          </a>
+        </div>
+      </section>
     </section>
   </body>
-  <script src="/js/Constants.js"></script>
-  <script src="/js/home.js" type="module"></script>
 </html>

@@ -3,27 +3,29 @@
   <head>
     <title>Choreo Note</title>
     <meta charset="utf-8">
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/home.css">
   </head>
   <body>
-    <section id="start_section">
-      <div id="start" class="bg">
-        <div class="title">Choreo Note</div>
-        <div class="description">간편 회원가입!</div>
+    <section class="main_section">
+      <div class="join_container">
+        <div class="logo"></div>
         <form id="join_form" action="/auth/join" method="post">
-          <div class="row">
-            <label for="join_email">이메일</label>
-            <input id="join_email" type="email" name="email" maxlength="40" required autofocus>
+          <div class="login__inputContainer">
+            <label class="login__label" for="join_email">이메일</label>
+            <input class="login__input" id="join_email" type="email" name="email" maxlength="40" required autofocus>
           </div>
-          <div class="row">
-            <label for="join_password">비밀번호</label>
-            <input id="join_password" type="password" name="password" required>
+          <div class="login__inputContainer">
+            <label class="login__label" for="join_password">비밀번호</label>
+            <input class="login__input" id="join_password" type="password" name="password" required>
           </div>
-          <div class="row">
-            <label for="join_nick">닉네임</label>
-            <input id="join_nick" type="text" name="nick" maxlength="10" required>
+          <div class="login__inputContainer">
+            <label class="login__label" for="join_nick">닉네임</label>
+            <input class="login__input" id="join_nick" type="text" name="nick" maxlength="10" required>
           </div>
-          <button id="join_btn" type="submit" class="btn">가입하기</button>
+          <div class="login__buttonContainer">
+            <button type="submit" class="login__button">가입하기</button>
+            <a id="cancel_button" class="login__button" href="/">취소</a>
+          </div>
         </form>
       </div>
     </section>

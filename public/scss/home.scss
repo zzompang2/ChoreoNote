@@ -1,0 +1,96 @@
+@import './component/root.scss';
+@import './component/variable.scss';
+
+.main_section {
+  width: 100%; height: 100%;
+  display: flex; align-items: center;
+  
+  background-color: var(--color-bg-dark);
+}
+
+.banner {
+  width: 50%;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+}
+
+.logo {
+  width: 200px; height: 60px;
+  background: url('../assets/icons/logo.svg') no-repeat center;
+  background-size: contain;
+}
+
+.banner__title {
+  font-size: 2rem;
+  color: var(--color-text-neg);
+}
+
+.login_section {
+  width: 50%;
+  display: flex;
+  align-items: center; justify-content: center;
+}
+.login_container {
+  width: 400px;
+  display: flex; flex-direction: column;
+  
+  padding: 16px;
+}
+
+.login__inputContainer {
+  display: flex;
+  align-items: center;
+  
+  padding: 16px;
+  margin-bottom: 12px;
+  border-radius: 40px;
+  
+  background-color: var(--color-container-90);
+}
+
+.login__label {
+  width: 68px;
+  color: var(--color-text-neg-secondary);
+  font-size: .9rem;
+}
+
+.login__input {
+  flex: 1;
+  color: var(--color-text-neg);
+  font-size: .9rem;
+  background: none;
+  border: none;
+}
+
+.login__buttonContainer {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.login__button {
+  display: flex; justify-content: center;
+  width: calc(50% - 4px);
+  padding: 12px 0;
+  
+  border: none;
+  border-radius: 40px;
+  font-size: .9rem;
+  color: var(--color-text-neg);
+  text-decoration: none;
+  background: none;
+  background-color: var(--color-brand);
+}
+
+.login__snsButton {
+  width: 100%;
+  margin-bottom: 6px;
+  
+  img { width: 100%; }
+}
+
+.join_container {
+  width: 100%;
+  display: flex; flex-direction: column;
+  align-items: center;
+}

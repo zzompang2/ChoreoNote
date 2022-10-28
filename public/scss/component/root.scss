@@ -21,6 +21,7 @@
   --color-text: #151515;
   --color-text-secondary: #757370;
   --color-text-neg: #ffffff;
+  --color-text-neg-secondary: #a0a0a0;
   --color-border: #e5e5e5;
   --color-container-10: #f5f5f5;
   --color-container-90: #1e1e1e;
@@ -89,4 +90,9 @@ input::-webkit-inner-spin-button {
 /* Firefox */
 input[type=number] {
   -moz-appearance: textfield;
+}
+
+object {
+  /* OBJECT 태그, 심지어 감싸는 div의 onclick도 안 되는 문제 해결 */
+  pointer-events: none;
 }
