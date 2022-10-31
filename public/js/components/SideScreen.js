@@ -101,6 +101,7 @@ export default class SideScreen {
     }
     
     dancerArray.forEach(dancer => {
+      if (!dancer) return;
       this.$sideScreen.querySelector("#dancer_list").append(this.createDancerButtonElem(dancer));
     });
 

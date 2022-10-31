@@ -5,6 +5,9 @@ const TAG = "Dancer.js/";
 
 export default class Dancer {
   constructor({ dancer, position, gap, selectDancer }) {
+    
+    console.log(dancer, position);
+    
     this.dancer = dancer;
     this.draggable = false;
     this.position = position;

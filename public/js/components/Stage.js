@@ -7,6 +7,8 @@ export default class Stage {
   #curPos;
 
   constructor({ dancerArray, formationArray, gap, selectDancer }) {
+    
+    console.log(formationArray);
     this.gap = gap;
     this.formationBoxIdx = 0;
     this.dancerArray = dancerArray;
@@ -69,6 +71,7 @@ export default class Stage {
     this.$stageDancer = $("#stage_dancer");
     this.$stageDancer.ondragover = e => e.preventDefault();
     this.dancerArray.forEach((dancer, idx) => {
+      if (!dancer) return;
       const dancerObj = new Dancer({ dancer, position: this.#curPos[dancer.id], gap, selectDancer: this.selectDancer });
       this.dancerObjArray[dancer.id] = dancerObj;
       this.$stageDancer.appendChild(dancerObj.$dancer);

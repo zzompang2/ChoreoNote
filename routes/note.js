@@ -52,7 +52,7 @@ router.get('/info', async (req, res, next) => {
     
     console.log("노트아이디:", id, "인덱스:", note.id);
     const [ dancers ] = await connection.query(
-      "SELECT id, name, color FROM dancer WHERE nid = ?;",
+      "SELECT id, name, color FROM dancer WHERE nid = ? ORDER BY id;",
       [note.id]
     );
     const [ times ] = await connection.query(
@@ -99,18 +99,17 @@ router.post('/update', isLoggedIn, async (req, res, next) => {
       );
     }
 
-    formations.forEach(async formation => {
-      console.log("formation", formation);
+    formations.forEach(async (formation, index) => {
       await connection.query(
         "INSERT INTO time (nid, id, start, duration) VALUES (?, ?, ?, ?);",
-        [ newId, formation.id, formation.start, formation.duration ]
+        [ newId, index+1, formation.start, formation.duration ]
       );
 
       for(let i=1; i < formation.positionsAtSameTime.length; i++) {
       	const pos = formation.positionsAtSameTime[i];
         await connection.query(
           "INSERT INTO pos (nid, tid, did, x, y) VALUES (?, ?, ?, ?, ?);",
-          [ newId, pos.tid, pos.did, pos.x, pos.y ]
+          [ newId, index+1, pos.did, pos.x, pos.y ]
         );
       }
     });
@@ -119,6 +118,51 @@ router.post('/update', isLoggedIn, async (req, res, next) => {
       "UPDATE note SET hide = true WHERE id = ?;",
       [ originNote.id ]
     );
+
+    res.json({ success: true });
+    
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+});
+
+router.post('/load', isLoggedIn, async (req, res, next) => {
+  try {
+    const { dancers, formations, noteInfo } = req.body;
+
+    // create new note
+    const [{ insertId: noteId }] = await connection.query(
+      "INSERT INTO note (uid, title, musicfile, musicname, duration) VALUES (?, ?, ?, ?, ?);",
+      [req.user.id, noteInfo.title, noteInfo.musicfile, noteInfo.musicname, noteInfo.duration ]
+    );
+    await connection.query(
+      "UPDATE note SET noteId = ? WHERE id = ?;",
+      [ noteId, noteId ]
+    );
+    
+    for(let i=1; i < dancers.length; i++) {
+      const dancer = dancers[i];
+      await connection.query(
+        "INSERT INTO dancer (nid, id, name, color) VALUES (?, ?, ?, ?);",
+        [ noteId, dancer.id, dancer.name, dancer.color ]
+      );
+    }
+
+    formations.forEach(async (formation, index) => {
+      await connection.query(
+        "INSERT INTO time (nid, id, start, duration) VALUES (?, ?, ?, ?);",
+        [ noteId, index+1, formation.start, formation.duration ]
+      );
+
+      for(let i=1; i < formation.positionsAtSameTime.length; i++) {
+      	const pos = formation.positionsAtSameTime[i];
+        await connection.query(
+          "INSERT INTO pos (nid, tid, did, x, y) VALUES (?, ?, ?, ?, ?);",
+          [ noteId, index+1, pos.did, pos.x, pos.y ]
+        );
+      }
+    });
 
     res.json({ success: true });
     

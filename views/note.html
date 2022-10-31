@@ -10,9 +10,6 @@
   <div id="save_button" class="header__button">
     저장하기
   </div>
-  <div id="save_file_button" class="header__button">
-    파일로 저장하기
-  </div>
 </div>
 {% endblock %}
 
@@ -130,6 +127,15 @@
 <audio id="audio" preload="metadata">
   <source type="audio/mp3">
 </audio>
+
+<div id="logo_contextMenu" class="dropdown dropdown--fixed" style="display: none">
+  <div id="open_dashboard_button" class="dropdown__item">
+    <div class="dropdown__item_text">대시보드창 열기</div>
+  </div>
+  <div id="save_file_button" class="dropdown__item">
+    <div class="dropdown__item_text">파일로 저장하기</div>
+  </div>
+</div>
 {% endblock %}
 
 {% block script %}

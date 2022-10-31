@@ -71,13 +71,16 @@ axios.get(`/note/info?id=${noteId}`)
 
 let state;
 
-function createNote(note, dancers, times, postions) {
+function createNote(noteInfo, dancers, times, postions) {
+  console.log(noteInfo, dancers, times, postions);
   state = new State({
-    noteInfo: note,
+    noteInfo,
     dancers,
     times,
     postions,
   });
+  
+  console.log(state.noteInfo, state.dancers, state.formations);
   
   // state.noteTitle = note.title;
   // state.dancerArray = dancers;
@@ -99,11 +102,12 @@ function createNote(note, dancers, times, postions) {
 function init() {
   // state.curTime = 0;
   
+  const $audio = $("#audio");
+  $audio.src = null;
+  
   if (state.noteInfo.musicfile) {
-    const $audio = $("#audio");
     $audio.src = "assets/music/" + state.noteInfo.musicfile;
     $audio.onloadedmetadata = () => {
-      
     };
   }
 
@@ -156,8 +160,17 @@ function init() {
     window.location.reload();
   };
   */
+  
+  $("#header_logo").onclick = e => {
+    e.stopPropagation();
+    $("#logo_contextMenu").style.display = "flex";
+    $("#logo_contextMenu").style.left = 0;
+  }
+
+  $("#open_dashboard_button").onclick = () => window.open('/dashboard');
   $("#save_file_button").onclick = saveFile;
-  $("#save_button").onclick = saveNoteDB; 
+  $("#save_button").onclick = saveNoteDB;
+  
 }
 
 function changeNoteTitle(newTitle) {
@@ -166,42 +179,6 @@ function changeNoteTitle(newTitle) {
   }
   sideScreen.changeNoteTitle();
 }
-
-/**
- * 불러온 DATABASE 파일 검사 및 분석
- * @param {FILE} file 
- */
-function handleFile(file) {
-  if (file === undefined) {
-    return;
-  }
-  const arr = file.name.split(".");
-  if(arr[arr.length-1] != "choreo") {
-    new Toast("choreo 파일이 아닙니다.", "warning");
-    // window.location.reload();
-    return;
-  }
-  state.noteTitle = arr[0];
-
-  const reader = new FileReader();
-  reader.onload = event => {
-    const result = JSON.parse(event.target.result);
-    if(!checkDB(result)) {
-      new Toast("파일이 훼손되었습니다!", "warning");
-      // window.location.reload();
-      return;
-    }
-    [state.dancers, state.formations, state.noteInfo] = result;
-    if(window.confirm(`다음으로 노래 파일을 선택해주세요! 노래 없이 불러오려면 취소를 눌러주세요.\n(노트에 등록된 노래: ${state.noteInfo.name == "" ? "없음" : state.noteInfo.name})`)) {
-      document.getElementById("input_musicfile").click();
-    }
-    else {
-      handleMusicFile();
-    }
-  }
-  reader.readAsText(file);
-}
-
 
 $("#music_input").onchange = e => {
   handleMusicFile(e.target.files[0]);
@@ -294,28 +271,6 @@ function handleMusicFile(file) {
   });
 }
 
-/**
- * JSON 파일의 형식이 올바른지 확인
- * @param {Array} result 
- * @returns 
- */
-function checkDB(result) {
-  const [dancers, formations, noteInfo] = result;
-
-  // dancers, formations, noteInfo 3개가 있어야 함
-  if(result.length != 3) {
-    console.log("Length is not 3.");
-    return false;
-  }
-
-  if(dancers == undefined || formations == undefined || noteInfo == undefined) {
-    console.log("Some array are undefined.");
-    return true;
-  }
-
-  return true;
-}
-
 let saveNoteDB_block = false;
 function saveNoteDB() {
   if (saveNoteDB_block) return;
@@ -349,11 +304,12 @@ function selectDancer(id) {
 }
 
 function saveFile() {
+  console.log(state.dancers, state.formations, state.noteInfo);
   const jsonData = JSON.stringify([state.dancers, state.formations, state.noteInfo]);
   const file = new Blob([jsonData], { type: "text/plain" });
   $("a", {
     href: URL.createObjectURL(file),
-    download: `${state.noteTitle}`
+    download: `${state.noteInfo.title}`
   }).click();
 }
 
@@ -710,7 +666,7 @@ function addDancer() {
     color: "#ff631b"
   });
   state.formations.forEach(formation => {
-    formation.positionsAtSameTime.push({ did, x: 0, y: 0 });
+    formation.positionsAtSameTime.push({ tid: formation.id, did, x: 0, y: 0 });
   });
   stage.stopAndSetPosition(state.curTime);
   stage.addDancer(did);
@@ -744,10 +700,6 @@ function changeDancerName(did, name) {
 function changeDancerColor(did, color) {
   state.dancers[did].color = color;
   stage.changeColor(did);
-}
-
-$("#header_logo").onclick = () => {
-  window.open('/dashboard');
 }
 
 /**
