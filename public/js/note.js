@@ -22,6 +22,10 @@ let sideScreen;
 class State {
   #currentTime = 0;
   #isPlaying = false;
+  #gap = 30;
+  #selectedBox = -1;
+  #selectedDancer = -1;
+  #copiedFormation = [];
   
   constructor({ noteInfo, dancers, times, postions }) {
     this.noteInfo = noteInfo;
@@ -35,11 +39,6 @@ class State {
       const index = this.formations.findIndex(elem => elem.id == position.tid);
       this.formations[index].positionsAtSameTime[position.did] = position;
     });
-    
-    this.selectedBoxIdx = -1;
-    this.selectedDancer = -1;
-    this.gap = 30;
-    this.copiedFormation = [];
   }
   
   get currentTime() {
@@ -59,10 +58,39 @@ class State {
     console.log("isPlaying", val);
     this.#isPlaying = val;
   }
+  
+  get selectedBox() {
+    return this.#selectedBox;
+  }
+  
+  set selectedBox(val) {
+    this.#selectedBox = val;
+  }
+  
+  get selectedDancer() {
+    return this.#selectedDancer;
+  }
+  
+  set selectedDancer(val) {
+    this.#selectedDancer = val;
+  }
+  
+  get gap() {
+    return this.#gap;
+  }
+  
+  set gap(val) {
+    this.#gap = val;
+  }
+  
+  get copiedFormation() {
+    return this.#copiedFormation;
+  }
+  
+  set copiedFormation(val) {
+    this.#copiedFormation = val;
+  }
 }
-
-let musicFile;
-let isNoMusicNote;
 
 const noteId = Number(new URL(location).searchParams.get("id"));
 
@@ -86,22 +114,6 @@ function createNote(noteInfo, dancers, times, postions) {
     postions,
   });
   
-  console.log(state.noteInfo, state.dancers, state.formations);
-  
-  // state.noteTitle = note.title;
-  // state.dancerArray = dancers;
-  // state.formationArray = times.map(time => ({
-  //   id: time.id,
-  //   time: time.start,
-  //   duration: time.duration,
-  //   positionsAtSameTime: []
-  // }));
-  
-  // postions.forEach(position => {
-  //   const index = state.formationArray.findIndex(elem => elem.id == position.tid);
-  // 	state.formationArray[index].positionsAtSameTime.push(position);
-  // });
-      
   init();
 }
 
@@ -334,7 +346,7 @@ function play() {
   const startMusicTime = state.currentTime;
 
   // DANCER DRAG 막기
-  state.selectedBoxIdx = -1;
+  state.selectedBox = -1;
   timeline.markBox(-1);
   toolbar.update(-1);
   stage.evalDraggable({ isBoxSelected: false, isMusicPlaying: true });
@@ -438,26 +450,26 @@ function update() {
     if(state.currentTime <= state.formations[id].start + state.formations[id].duration) {
       // BOX 안으로 들어온 경우: DRAGGABLE=true
       if(state.formations[id].start <= state.currentTime) {
-        state.selectedBoxIdx = id;
+        state.selectedBox = id;
         stage.evalDraggable({ isBoxSelected: true });
       }
       // BOX 밖인 경우: DRAGGABLE=false
       else {
-        state.selectedBoxIdx = -1;
+        state.selectedBox = -1;
         stage.evalDraggable({ isBoxSelected: false });
       }
       // BOX MARK 업데이트
-      timeline.markBox(state.selectedBoxIdx);
+      timeline.markBox(state.selectedBox);
       break;
     }
   }
   // 모든 BOX보다 오른쪽인 경우
   if(id == state.formations.length) {
-    state.selectedBoxIdx = -1;
+    state.selectedBox = -1;
     timeline.markBox(-1);
   }
 
-  toolbar.update(state.selectedBoxIdx);
+  toolbar.update(state.selectedBox);
 }
 
 /*********************
@@ -476,7 +488,7 @@ function addFormationBox() {
     return;
   }
 
-  const { noteInfo: { duration }, formations, curTime, selectedBoxIdx } = state;
+  const { noteInfo: { duration }, formations, curTime, selectedBox } = state;
   
   /* 새로 만들 BOX의 INDEX */
   let idx = 0;
@@ -485,8 +497,8 @@ function addFormationBox() {
   }
   
   /* 선택된 BOX가 새로운 BOX보다 오른쪽인 경우 */
-  if(selectedBoxIdx >= idx)
-  state.selectedBoxIdx++;
+  if(selectedBox >= idx)
+  state.selectedBox++;
 
   /* 새로 만들 BOX의 길이 설정(최대 5*TIME_UNIT) */
   let boxDuration;
@@ -535,7 +547,7 @@ const checkFormationAddable = () => {
 }
 
 function deleteFormationBox() {
-  const targetId = state.selectedBoxIdx;
+  const targetId = state.selectedBox;
   if(targetId == -1) return;
 
   if(state.formations.length == 1) {
@@ -552,7 +564,7 @@ function deleteFormationBox() {
 }
 
 function copyFormation() {
-  const targetId = state.selectedBoxIdx;
+  const targetId = state.selectedBox;
   if(targetId == -1) return;
 
   state.copiedFormation = [];
@@ -561,7 +573,7 @@ function copyFormation() {
 }
 
 function pasteFormation() {
-  const targetId = state.selectedBoxIdx;
+  const targetId = state.selectedBox;
   if(targetId == -1) return;
 
   if(state.copiedFormation.length == 0) {
@@ -583,7 +595,7 @@ function selectFormationBox(idx) {
   pauseMusic();
 
   // 선택된 BOX를 선택한 경우: Nothing
-  if(state.selectedBoxIdx == idx) return;
+  if(state.selectedBox == idx) return;
 
   // 새로운 BOX를 선택한 경우
   setCurTime(state.formations[idx].start);
