@@ -8,14 +8,14 @@ import Timeline from "./components/Timeline.js";
 import Toast from "./components/Toast.js";
 import Toolbar from "./components/Toolbar.js";
 
+const NOTE_ID = Number(new URL(location).searchParams.get("id"));
+
 let state;
 let stage;
 let musicPlayer;
 let timeline;
 let toolbar;
 let sideScreen;
-
-const NOTE_ID = Number(new URL(location).searchParams.get("id"));
 
 /************/
 
@@ -35,15 +35,11 @@ function initializeNote() {
   axios.get(`/note/info?id=${NOTE_ID}`)
   .then(res => {
     const { noteInfo, dancers, times, postions } = res.data;
+    
+    /* State */
     state = new State({ noteInfo, dancers, times, postions });
-    init();
-  })
-  .catch(err => {
-    console.error(err);
-  });
-  
-  function init() {
-
+    
+    /* Audio */
     const $audio = $("#audio");
     $audio.src = null;
 
@@ -104,7 +100,11 @@ function initializeNote() {
     $("#open_dashboard_button").onclick = () => window.open('/dashboard');
     $("#save_file_button").onclick = saveFile;
     $("#save_button").onclick = saveNoteDB;
-  }
+    $("#music_input").onchange = e => handleMusicFile(e.target.files[0]);
+  })
+  .catch(err => {
+    console.error(err);
+  });
 }
 
 function changeNoteTitle(newTitle) {
@@ -112,10 +112,6 @@ function changeNoteTitle(newTitle) {
     state.noteInfo.title = newTitle.trim();
   }
   sideScreen.changeNoteTitle();
-}
-
-$("#music_input").onchange = e => {
-  handleMusicFile(e.target.files[0]);
 }
 
 function handleMusicFile(file) {
@@ -225,18 +221,6 @@ function saveNoteDB() {
   saveNoteDB_block = false;
 }
 
-function selectDancer(id) {
-  if(state.selectedDancer != -1) {
-    sideScreen.unselect(state.selectedDancer);
-    stage.unselect(state.selectedDancer);
-  }
-  state.selectedDancer = id;
-  if (id != -1) {
-  	sideScreen.select(id);
-    stage.select(id);
-  }
-}
-
 function saveFile() {
   console.log(state.dancers, state.formations, state.noteInfo);
   const jsonData = JSON.stringify([state.dancers, state.formations, state.noteInfo]);
@@ -247,9 +231,56 @@ function saveFile() {
   }).click();
 }
 
-/*************
- *** MUSIC ***
- *************/
+function setCurTime(ms) {
+  // 노래 PAUSE
+  pauseMusic();
+
+  // state 업데이트
+  state.currentTime = ms;
+  // TIME MARKER 이동
+  timeline.moveTimeMarker(ms);
+  // MUSIC PLAYER 업데이트
+  musicPlayer.curTime = ms;
+  // DANCER 이동
+  update();
+}
+
+function update() {
+  stage.stopAndSetPosition(state.currentTime);
+
+  // BOX 안으로 들어왔는지 검사
+  let id = 0;
+  for(; id < state.formations.length; id++) {
+    if(state.currentTime <= state.formations[id].start + state.formations[id].duration) {
+      // BOX 안으로 들어온 경우: DRAGGABLE=true
+      if(state.formations[id].start <= state.currentTime) {
+        state.selectedBox = id;
+        stage.evalDraggable({ isBoxSelected: true });
+      }
+      // BOX 밖인 경우: DRAGGABLE=false
+      else {
+        state.selectedBox = -1;
+        stage.evalDraggable({ isBoxSelected: false });
+      }
+      // BOX MARK 업데이트
+      timeline.markBox(state.selectedBox);
+      break;
+    }
+  }
+  // 모든 BOX보다 오른쪽인 경우
+  if(id == state.formations.length) {
+    state.selectedBox = -1;
+    timeline.markBox(-1);
+  }
+
+  toolbar.update(state.selectedBox);
+}
+
+/*************/
+
+/*** MUSIC ***/
+
+/*************/
 
 function clickPlayBtn() {
   state.isPlaying ? setCurTime(state.currentTime) : play();
@@ -343,54 +374,11 @@ function pauseMusic(ms) {
   stage.evalDraggable({ isMusicPlaying: false });
 }
 
-function setCurTime(ms) {
-  // 노래 PAUSE
-  pauseMusic();
+/*********************/
 
-  // state 업데이트
-  state.currentTime = ms;
-  // TIME MARKER 이동
-  timeline.moveTimeMarker(ms);
-  // MUSIC PLAYER 업데이트
-  musicPlayer.curTime = ms;
-  // DANCER 이동
-  update();
-}
+/*** FORMATION BOX ***/
 
-function update() {
-  stage.stopAndSetPosition(state.currentTime);
-
-  // BOX 안으로 들어왔는지 검사
-  let id = 0;
-  for(; id < state.formations.length; id++) {
-    if(state.currentTime <= state.formations[id].start + state.formations[id].duration) {
-      // BOX 안으로 들어온 경우: DRAGGABLE=true
-      if(state.formations[id].start <= state.currentTime) {
-        state.selectedBox = id;
-        stage.evalDraggable({ isBoxSelected: true });
-      }
-      // BOX 밖인 경우: DRAGGABLE=false
-      else {
-        state.selectedBox = -1;
-        stage.evalDraggable({ isBoxSelected: false });
-      }
-      // BOX MARK 업데이트
-      timeline.markBox(state.selectedBox);
-      break;
-    }
-  }
-  // 모든 BOX보다 오른쪽인 경우
-  if(id == state.formations.length) {
-    state.selectedBox = -1;
-    timeline.markBox(-1);
-  }
-
-  toolbar.update(state.selectedBox);
-}
-
-/*********************
- *** FORMATION BOX ***
- *********************/
+/*********************/
 
 function addFormationBox() {
   if(state.isPlaying) {
@@ -588,6 +576,12 @@ function changeFormationTimeAndDuration({ id, start, duration }) {
   }
 }
 
+/**************/
+
+/*** DANCER ***/
+
+/**************/
+
 function addDancer() {
   if(state.isPlaying) {
     new Toast("노래 재생중입니다.", "warning");
@@ -634,4 +628,16 @@ function changeDancerName(did, name) {
 function changeDancerColor(did, color) {
   state.dancers[did].color = color;
   stage.changeColor(did);
+}
+
+function selectDancer(id) {
+  if(state.selectedDancer != -1) {
+    sideScreen.unselect(state.selectedDancer);
+    stage.unselect(state.selectedDancer);
+  }
+  state.selectedDancer = id;
+  if (id != -1) {
+  	sideScreen.select(id);
+    stage.select(id);
+  }
 }
