@@ -390,12 +390,12 @@ function addFormationBox() {
     return;
   }
 
-  const { noteInfo: { duration }, formations, curTime, selectedBox } = state;
+  const { noteInfo: { duration }, formations, currentTime, selectedBox } = state;
   
   /* 새로 만들 BOX의 INDEX */
   let idx = 0;
   for(; idx < formations.length; idx++) {
-    if(curTime < formations[idx].start) break;
+    if(currentTime < formations[idx].start) break;
   }
   
   /* 선택된 BOX가 새로운 BOX보다 오른쪽인 경우 */
@@ -407,15 +407,15 @@ function addFormationBox() {
 
   // 오른쪽에 아무 BOX도 없는 경우: 노래 넘어가지 않도록 길이 설정
   if(idx == formations.length)
-  boxDuration = duration - curTime >= 5*TIME_UNIT ? 5*TIME_UNIT : duration - curTime;
+  boxDuration = duration - currentTime >= 5*TIME_UNIT ? 5*TIME_UNIT : duration - currentTime;
   // 오른쪽에 BOX가 있는 경우: (사이 공간-1) 만큼 설정
   else
-  boxDuration = formations[idx].start - curTime > 5*TIME_UNIT ? 5*TIME_UNIT : formations[idx].start - curTime - TIME_UNIT;
+  boxDuration = formations[idx].start - currentTime > 5*TIME_UNIT ? 5*TIME_UNIT : formations[idx].start - currentTime - TIME_UNIT;
 
   const curPos = [];
   stage.curPosition.forEach(pos => curPos[pos.did] = {...pos}); // stage.curPos deep-copy
   state.formations.splice(idx, 0, {
-    start: curTime,
+    start: currentTime,
     duration: boxDuration,
     positionsAtSameTime: curPos
   });
@@ -427,23 +427,23 @@ function addFormationBox() {
  * state 상태에서 새로운 formation 을 추가할 수 있는지 여부를 체크한다.
  */
 const checkFormationAddable = () => {
-  const { noteInfo: { duration }, formations, curTime } = state;
+  const { noteInfo: { duration }, formations, currentTime } = state;
 
-  // curTime 유효성 검사
-  if(curTime < 0 || duration <= curTime + TIME_UNIT)
+  // currentTime 유효성 검사
+  if(currentTime < 0 || duration <= currentTime + TIME_UNIT)
   return false;
 
-  // curTime 을 포함하거나 바로 오른쪽에 있는 BOX 를 찾는다
+  // currentTime 을 포함하거나 바로 오른쪽에 있는 BOX 를 찾는다
   let i = 0;
   for(; i<formations.length; i++) {
-    if(curTime <= formations[i].start + formations[i].duration) break;
+    if(currentTime <= formations[i].start + formations[i].duration) break;
   }
 
   // 모든 BOX 보다 오른쪽에 있는 경우
   if(i == formations.length) return true;
 
   // BOX 를 만들 공간(최소 TIME_UNIT)이 충분한 경우
-  if(curTime < formations[i].start - TIME_UNIT) return true;
+  if(currentTime < formations[i].start - TIME_UNIT) return true;
 
   return false;
 }

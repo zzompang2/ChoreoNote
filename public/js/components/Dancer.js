@@ -4,10 +4,7 @@ import Toast from "./Toast.js";
 const TAG = "Dancer.js/";
 
 export default class Dancer {
-  constructor({ dancer, position, gap, selectDancer }) {
-    
-    console.log(dancer, position);
-    
+  constructor({ dancer, position, gap, selectDancer }) {    
     this.dancer = dancer;
     this.draggable = false;
     this.position = position;
