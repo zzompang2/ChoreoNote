@@ -5,6 +5,7 @@ const TAG = "Stage.js/";
 
 export default class Stage {
   #curPos;
+  #isSnap = false;
 
   constructor({ dancerArray, formationArray, gap, selectDancer }) {
     
@@ -232,6 +233,7 @@ export default class Stage {
   }
 
   snap(bool) {
+    this.#isSnap = bool;
     this.dancerObjArray.forEach($dancer => $dancer.snap(bool));
   }
 
@@ -245,7 +247,11 @@ export default class Stage {
 
   addDancer(did) {
     const dancer = this.dancerArray[did];
-    const dancerObj = new Dancer({ dancer, position: this.#curPos[did], gap: this.gap, selectDancer: this.selectDancer });
+    const dancerObj = new Dancer({
+      dancer, position: this.#curPos[did],
+      gap: this.gap, selectDancer: this.selectDancer,
+      isSnap: this.#isSnap
+    });
     this.dancerObjArray[did] = dancerObj;
     this.$stageDancer.appendChild(dancerObj.$dancer);
     this.evalDraggable({});

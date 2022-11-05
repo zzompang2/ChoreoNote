@@ -4,7 +4,7 @@ import Toast from "./Toast.js";
 const TAG = "Dancer.js/";
 
 export default class Dancer {
-  constructor({ dancer, position, gap, selectDancer }) {    
+  constructor({ dancer, position, gap, selectDancer, isSnap }) {    
     this.dancer = dancer;
     this.draggable = false;
     this.position = position;
@@ -18,7 +18,7 @@ export default class Dancer {
     this.$dancer.style.left = STAGE_WIDTH/2 + position.x + "px";
     this.$dancer.style.top = STAGE_HEIGHT/2 + position.y + "px";
     this.$dancer.style.transitionDuration = "100ms";
-    this.isSnap = false;
+    this.isSnap = isSnap;
     this.reason = "";
     
     this.$dancer.onclick = e => {
