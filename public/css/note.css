@@ -1,13 +1,15 @@
 @charset "UTF-8";
 .stage {
-  width: 600px;
-  height: 400px;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  overflow: hidden;
   perspective: 400px;
 }
 
 .stage__wrap {
-  width: 100%;
-  height: 100%;
+  width: 600px;
+  height: 400px;
   background-color: var(--color-white);
   transform-style: preserve-3d;
   transition-duration: 1s;
@@ -39,7 +41,6 @@
   width: 100%;
   height: 100%;
   transform-style: preserve-3d;
-  overflow: hidden;
 }
 
 .player {
