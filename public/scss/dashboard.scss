@@ -2,6 +2,45 @@
 
 $var-note-title-part-height: 60px;
 
+/**************/
+
+/*** HEADER ***/
+
+/**************/
+
+.note__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 20px;
+  
+  border-bottom: 1px solid var(--color-border);
+}
+
+.note__header_title {
+  font-size: 1.4rem;
+}
+
+.note__header_sortButton {
+  position: relative;
+	display: flex; align-items: center;
+  padding: 6px 8px 6px 6px;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+}
+
+.note__header_sortIcon {
+  width: 16px; height: 16px;
+  background: no-repeat center url("../assets/icons/Small(16)/Sort.svg");
+  background-size: contain;
+  margin-right: 4px;
+}
+
+.note__header_sortLabel {
+  font-size: .8rem;
+}
+
 /************/
 
 /*** BODY ***/

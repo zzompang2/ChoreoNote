@@ -1,13 +1,62 @@
 import { $, createElemWithHtml } from "/js/constant.js";
 
+const sortContextMenu = $("#sort_contextMenu");
+
 window.onload = () => {
   $(".grid")[0].classList.add("grid--onload");
 }
-
 $("#create_note_btn").onclick = createNote;
 
+$("#sort_button").onclick = e => {
+  e.stopPropagation();
+  
+  sortContextMenu.style.display = sortContextMenu.style.display == "flex" ? "none" : "flex";
+  sortContextMenu.style.top = $("#sort_button").getBoundingClientRect().height + "px";
+  sortContextMenu.style.right = 0;
+}
+
+const noteElemList = [];
+let currentSort = "createdAt";
+let sortBlock = false;
+const sortLabel = {
+  createdAt: "생성일 순서",
+  editedAt: "수정일 순서",
+  title: "이름 순서"
+};
+
+$("#sort_create").onclick = () => sortNote("createdAt");
+$("#sort_edit").onclick   = () => sortNote("editedAt");
+$("#sort_title").onclick  = () => sortNote("title");
+
+function sortNote(newSort) {
+  if (currentSort == newSort || sortBlock) return;
+  sortBlock = true;
+  currentSort = newSort;
+  
+  $("#sort_label").textContent = sortLabel[newSort];
+  
+  axios.get(`/dashboard/sort?orderby=${newSort}`)
+  .then(res => {
+    const { notes } = res.data;
+    
+    const fragment = document.createDocumentFragment();
+    
+    notes.forEach(note => fragment.append( noteElemList[note.id] ));
+    $("#note_container").append(fragment);
+  })
+  .catch(err => {
+    
+    console.error(err);
+  })
+  .finally(() => {
+    sortBlock = false;
+  });
+}
+
 /****************/
+
 /*** FUNCTION ***/
+
 /****************/
 
 function createNote() {
@@ -44,7 +93,7 @@ axios.get('/dashboard/get_notes')
     </div>
     `);
     
-    console.log(notes);
+    noteElemList[note.id] = $note;
     
     /* THUMBNAIL */
     const thumbnail = $note.querySelector(".note__thumbnail");

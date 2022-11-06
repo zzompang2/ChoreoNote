@@ -126,4 +126,25 @@ router.get('/get_notes', isLoggedIn, async (req, res, next) => {
   }
 });
 
+router.get('/sort', isLoggedIn, async (req, res, next) => {
+  try {
+    let { orderby } = req.query;
+    
+    if (orderby == "createdAt" || orderby == "editedAt")
+      orderby += " DESC";
+    
+  	const [ notes ] = await connection.query(`
+    	SELECT id
+      FROM note
+      WHERE uid = ? AND hide = false
+      ORDER BY ${orderby};`,
+      [req.user.id]);
+
+    res.send({ notes });
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+});
+
 module.exports = router;

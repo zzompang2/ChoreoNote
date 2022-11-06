@@ -5,6 +5,24 @@
 {% endblock %}
 
 {% block innerbody %}
+<div class="note__header">
+  <div class="note__header_title">모든 노트</div>
+  <div id="sort_button" class="note__header_sortButton">
+  	<div class="note__header_sortIcon"></div>
+    <div id="sort_label" class="note__header_sortLabel">생성일 순서</div>
+    <div id="sort_contextMenu" class="dropdown" style="display: none">
+      <div id="sort_create" id="delete_button" class="dropdown__item">
+        <div class="dropdown__item_text">생성일 순서</div>
+      </div>
+      <div id="sort_edit" id="delete_button" class="dropdown__item">
+        <div class="dropdown__item_text">수정일 순서</div>
+      </div>
+      <div id="sort_title" id="delete_button" class="dropdown__item">
+        <div class="dropdown__item_text">이름 순서</div>
+      </div>
+    </div>
+  </div>
+</div>
 <div id="note_container" class="grid">
 
   <div class="note__createContainer">
