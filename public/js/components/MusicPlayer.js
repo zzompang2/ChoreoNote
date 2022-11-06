@@ -2,7 +2,7 @@ import { musicDurationFormat, $ } from "/js/constant.js";
 const TAG = "MusicPlayer.js/";
 
 export default class MusicPlayer {
-  constructor({ musicInfo, curTime, clickPlayBtn, addFormationBox }) {
+  constructor({ state, clickPlayBtn, addFormationBox }) {
     this.$playerSection = $("#player_section");
 
     this.isMusicPlaying = false;
@@ -24,14 +24,14 @@ export default class MusicPlayer {
     // DURATION TEXT
     const $durationText = this.$playerSection.querySelector("#duration_text");
 
-    const text = musicDurationFormat(musicInfo.duration, true);
+    const text = musicDurationFormat(state.noteInfo.duration, true);
     $durationText.children[0].childNodes[0].data = text.slice(0, -3);
     $durationText.children[1].childNodes[0].data = text.slice(-3);
 
-    this.musicCanPlay = musicInfo.name == "" ? false : true;
+    this.musicCanPlay = state.noteInfo.name == "" ? false : true;
     this.$audio = document.getElementById("audio");
-    this._curTime = curTime;
-    this.musicDuration = musicInfo.duration; // ms
+    this._curTime = state.currentTime;
+    this.musicDuration = state.noteInfo.duration; // ms
   }
 
   setCurTimeText(ms) {

@@ -3,8 +3,7 @@ const TAG = "SideScreen.js/";
 
 export default class SideScreen {
   constructor({
-    noteInfo,
-    dancerArray,
+    state,
     addDancer,
     deleteDancer,
     changeDancerName,
@@ -12,7 +11,7 @@ export default class SideScreen {
     selectDancer,
     changeNoteTitle,
   }) {
-    this.noteInfo = noteInfo;
+    this.noteInfo = state.noteInfo;
     this.changeNoteTitle();
     
     $("#note_title_input").onchange = e => {
@@ -21,7 +20,7 @@ export default class SideScreen {
     
     this.setMusicName();
     
-    this.dancerArray = dancerArray;
+    this.dancerArray = state.dancers;
     this.changeDancerName = changeDancerName;
     this.deleteDancer = deleteDancer;
     this.changeDancerColor = changeDancerColor;
@@ -100,7 +99,7 @@ export default class SideScreen {
       return $dancerButtonContainer;
     }
     
-    dancerArray.forEach(dancer => {
+    this.dancerArray.forEach(dancer => {
       if (!dancer) return;
       this.$sideScreen.querySelector("#dancer_list").append(this.createDancerButtonElem(dancer));
     });

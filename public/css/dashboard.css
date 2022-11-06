@@ -22,6 +22,9 @@
   border: 1px solid var(--color-border);
   border-radius: 4px;
 }
+.note__header_sortButton:hover {
+  background-color: var(--color-hover);
+}
 
 .note__header_sortIcon {
   width: 16px;

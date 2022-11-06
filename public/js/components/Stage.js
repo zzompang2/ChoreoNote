@@ -7,14 +7,13 @@ export default class Stage {
   #curPos;
   #isSnap = false;
 
-  constructor({ dancerArray, formationArray, gap, selectDancer }) {
+  constructor({state, selectDancer }) {
     
-    console.log(formationArray);
-    this.gap = gap;
+    this.gap = state.gap;
     this.formationBoxIdx = 0;
-    this.dancerArray = dancerArray;
-    this.formationArray = formationArray;
-    this.#curPos = formationArray[0].positionsAtSameTime;
+    this.dancerArray = state.dancers;
+    this.formationArray = state.formations;
+    this.#curPos = this.formationArray[0].positionsAtSameTime;
     this.dancerObjArray = [];
     this.isRotated = false;
     this.isSloped = false;
@@ -35,7 +34,7 @@ export default class Stage {
     this.$stageAxis = $("#stage_axis");
     this.$stageAxis.setAttribute("id", "stage_axis");
 
-    for(let i = 0, left = 0; left < STAGE_WIDTH/2; left += gap) {
+    for(let i = 0, left = 0; left < STAGE_WIDTH/2; left += this.gap) {
       const $axis = document.createElement("div");
       $axis.setAttribute("class", "axis_vertical");
       $axis.style.left = STAGE_WIDTH /2 + left + "px";
@@ -43,7 +42,7 @@ export default class Stage {
       this.$stageAxis.appendChild($axis);
       i++;
     }
-    for(let i = 1, left = gap; left < STAGE_WIDTH/2; left += gap) {
+    for(let i = 1, left = this.gap; left < STAGE_WIDTH/2; left += this.gap) {
       const $axis = document.createElement("div");
       $axis.setAttribute("class", "axis_vertical");
       $axis.style.left = STAGE_WIDTH /2 - left + "px";
@@ -51,7 +50,7 @@ export default class Stage {
       this.$stageAxis.appendChild($axis);
       i++;
     }
-    for(let i = 0, top = 0; top < STAGE_HEIGHT/2; top += gap) {
+    for(let i = 0, top = 0; top < STAGE_HEIGHT/2; top += this.gap) {
       const $axis = document.createElement("div");
       $axis.setAttribute("class", "axis_horizontal");
       $axis.style.top = STAGE_HEIGHT /2 + top + "px";
@@ -59,7 +58,7 @@ export default class Stage {
       this.$stageAxis.appendChild($axis);
       i++;
     }
-    for(let i = 1, top = gap; top < STAGE_HEIGHT/2; top += gap) {
+    for(let i = 1, top = this.gap; top < STAGE_HEIGHT/2; top += this.gap) {
       const $axis = document.createElement("div");
       $axis.setAttribute("class", "axis_horizontal");
       $axis.style.top = STAGE_HEIGHT /2 - top + "px";
@@ -73,7 +72,7 @@ export default class Stage {
     this.$stageDancer.ondragover = e => e.preventDefault();
     this.dancerArray.forEach((dancer, idx) => {
       if (!dancer) return;
-      const dancerObj = new Dancer({ dancer, position: this.#curPos[dancer.id], gap, selectDancer: this.selectDancer });
+      const dancerObj = new Dancer({ dancer, position: this.#curPos[dancer.id], gap: this.gap, selectDancer: this.selectDancer });
       this.dancerObjArray[dancer.id] = dancerObj;
       this.$stageDancer.appendChild(dancerObj.$dancer);
     });

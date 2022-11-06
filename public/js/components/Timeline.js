@@ -6,23 +6,22 @@ const TAG = "Timeline.js/";
 
 export default class Timeline {
   constructor({
-    musicDuration,
-    formationArray,
+    state,
     pauseMusic,
     setCurTime,
     selectFormationBox,
     changeFormationTimeAndDuration,
   }) {
     this.curTime = 0;
-    this.musicDuration = musicDuration;
-    this.formationArray = formationArray;
+    this.musicDuration = state.noteInfo.duration;
+    this.formationArray = state.formations;
     this.selectFormationBox = selectFormationBox;
     this.changeFormationTimeAndDuration = changeFormationTimeAndDuration;
     this.$timeline = $("#timeline_section");
     const $container = this.$timeline.children[0];
     this.markedBoxIdx = -1;
 
-    $container.style.width = musicDuration / 1000 * PIXEL_PER_SEC + TIMELINE_PADDING*2 + "px";
+    $container.style.width = this.musicDuration / 1000 * PIXEL_PER_SEC + TIMELINE_PADDING*2 + "px";
     /* TIMELINE */
     //[...$container.children].forEach(elem => elem.remove());
     const $timeRuler = $("#time_ruler");
@@ -69,7 +68,7 @@ export default class Timeline {
       // 실제 위치 이동
       this.$timeMarker.style.transform = null;
       let newTime = roundTime(this.curTime + (e.offsetX-HANDLE_WIDTH/2) / PIXEL_PER_SEC * 1000);
-      newTime = newTime <= 0 ? 0 : newTime > musicDuration ? musicDuration : newTime;
+      newTime = newTime <= 0 ? 0 : newTime > this.musicDuration ? this.musicDuration : newTime;
       this.dragging = false;
       setCurTime(newTime);
     };
@@ -80,7 +79,7 @@ export default class Timeline {
     $space.style.width = TIMELINE_PADDING - PIXEL_PER_SEC/2 + "px";
     $timeNumber.appendChild($space);
 
-    for (let sec=0; sec <= musicDuration / 1000; sec++) {
+    for (let sec=0; sec <= this.musicDuration / 1000; sec++) {
       const $div = document.createElement("div");
       $div.style.width = PIXEL_PER_SEC + "px";
       $div.setAttribute("class", "number");
@@ -95,7 +94,7 @@ export default class Timeline {
     $space.style.width = TIMELINE_PADDING - PIXEL_PER_SEC/8 + "px";
     $timeScale.appendChild($space);
 
-    for (let i=0; i<musicDuration/250+1; i++) {
+    for (let i=0; i<this.musicDuration/250+1; i++) {
       const $wrap = document.createElement("div");
       $wrap.setAttribute("id", i);
       $wrap.setAttribute("class", "scale_wrap");
@@ -115,7 +114,7 @@ export default class Timeline {
     const clickTimeRuler = ({ offsetX }) => {
       const offset = offsetX - TIMELINE_PADDING;
       let selectedTime = roundTime(offset / PIXEL_PER_SEC * 1000);
-      selectedTime = selectedTime < 0 ? 0 : selectedTime > musicDuration ? musicDuration : selectedTime;
+      selectedTime = selectedTime < 0 ? 0 : selectedTime > this.musicDuration ? this.musicDuration : selectedTime;
       setCurTime(selectedTime);
     }
 
@@ -123,7 +122,7 @@ export default class Timeline {
     $fragment = document.createDocumentFragment();
 
     this.formationList = [];
-    formationArray.forEach((formationInfo, id) => {
+    state.formations.forEach((formationInfo, id) => {
       const formationBox = new FormationBox({
         formationInfo, id,
         selectFormationBox,

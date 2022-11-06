@@ -50,22 +50,18 @@ function initializeNote() {
     }
 
     stage = new Stage({
-      dancerArray: state.dancers,
-      formationArray: state.formations,
-      gap: state.gap,
-      selectDancer
+      state,
+      selectDancer,
     });
 
     musicPlayer = new MusicPlayer({
-      musicInfo: state.noteInfo,
-      curTime: state.currentTime,
+      state,
       clickPlayBtn,
       addFormationBox,
     });
 
     timeline = new Timeline({
-      musicDuration: state.noteInfo.duration,
-      formationArray: state.formations,
+      state,
       pauseMusic,
       setCurTime,
       selectFormationBox,
@@ -79,8 +75,7 @@ function initializeNote() {
     });
 
     sideScreen = new SideScreen({
-      noteInfo: state.noteInfo,
-      dancerArray: state.dancers,
+      state,
       addDancer,
       deleteDancer,
       changeDancerName,
