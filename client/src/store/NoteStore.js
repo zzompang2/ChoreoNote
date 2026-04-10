@@ -1,0 +1,273 @@
+import { db } from './db.js';
+
+const DEFAULT_DANCERS = [
+  { name: 'Ham', color: '#FF6B6B', order: 0 },
+  { name: 'Lulu', color: '#4ECDC4', order: 1 },
+];
+
+const DEFAULT_FORMATIONS = [
+  { startTime: 0, duration: 1250, order: 0 },
+  { startTime: 2500, duration: 1250, order: 1 },
+];
+
+export const NoteStore = {
+  async createNote(title = '새 안무 노트') {
+    return db.transaction('rw', db.notes, db.dancers, db.formations, db.positions, async () => {
+      const now = new Date();
+      const noteId = await db.notes.add({
+        title,
+        musicName: null,
+        musicBlobId: null,
+        duration: 30000,
+        createdAt: now,
+        editedAt: now,
+      });
+
+      const dancerIds = [];
+      for (const d of DEFAULT_DANCERS) {
+        const did = await db.dancers.add({ noteId, ...d });
+        dancerIds.push(did);
+      }
+
+      for (const f of DEFAULT_FORMATIONS) {
+        const fid = await db.formations.add({ noteId, ...f });
+        for (const did of dancerIds) {
+          await db.positions.add({ formationId: fid, dancerId: did, x: 0, y: 0 });
+        }
+      }
+
+      return noteId;
+    });
+  },
+
+  async loadNote(noteId) {
+    const note = await db.notes.get(noteId);
+    if (!note) return null;
+
+    const dancers = await db.dancers.where('noteId').equals(noteId).sortBy('order');
+    const formations = await db.formations.where('noteId').equals(noteId).sortBy('order');
+
+    const formationsWithPositions = await Promise.all(
+      formations.map(async (f) => {
+        const positions = await db.positions.where('formationId').equals(f.id).toArray();
+        return { ...f, positions };
+      })
+    );
+
+    let musicBlob = null;
+    const musicFile = await db.musicFiles.where('noteId').equals(noteId).first();
+    if (musicFile) {
+      musicBlob = musicFile.blob;
+    }
+
+    return {
+      note,
+      dancers,
+      formations: formationsWithPositions,
+      musicBlob,
+    };
+  },
+
+  async saveNote(noteId, { dancers, formations }) {
+    return db.transaction(
+      'rw',
+      db.notes, db.dancers, db.formations, db.positions,
+      async () => {
+        await db.notes.update(noteId, { editedAt: new Date() });
+
+        // Clear and rewrite dancers
+        await db.dancers.where('noteId').equals(noteId).delete();
+        const dancerIdMap = new Map(); // old index -> new db id
+
+        for (let i = 0; i < dancers.length; i++) {
+          const d = dancers[i];
+          const newId = await db.dancers.add({
+            noteId,
+            name: d.name,
+            color: d.color,
+            order: i,
+          });
+          dancerIdMap.set(i, newId);
+        }
+
+        // Clear and rewrite formations + positions
+        const oldFormations = await db.formations.where('noteId').equals(noteId).toArray();
+        for (const f of oldFormations) {
+          await db.positions.where('formationId').equals(f.id).delete();
+        }
+        await db.formations.where('noteId').equals(noteId).delete();
+
+        for (let i = 0; i < formations.length; i++) {
+          const f = formations[i];
+          const fid = await db.formations.add({
+            noteId,
+            startTime: f.startTime,
+            duration: f.duration,
+            order: i,
+          });
+          for (const pos of f.positions) {
+            const newDancerId = dancerIdMap.get(pos.dancerIndex);
+            if (newDancerId !== undefined) {
+              await db.positions.add({
+                formationId: fid,
+                dancerId: newDancerId,
+                x: pos.x,
+                y: pos.y,
+              });
+            }
+          }
+        }
+      }
+    );
+  },
+
+  async deleteNote(noteId) {
+    return db.transaction(
+      'rw',
+      db.notes, db.dancers, db.formations, db.positions, db.musicFiles,
+      async () => {
+        const formations = await db.formations.where('noteId').equals(noteId).toArray();
+        for (const f of formations) {
+          await db.positions.where('formationId').equals(f.id).delete();
+        }
+        await db.formations.where('noteId').equals(noteId).delete();
+        await db.dancers.where('noteId').equals(noteId).delete();
+        await db.musicFiles.where('noteId').equals(noteId).delete();
+        await db.notes.delete(noteId);
+      }
+    );
+  },
+
+  async updateNoteTitle(noteId, title) {
+    await db.notes.update(noteId, { title, editedAt: new Date() });
+  },
+
+  async saveMusicFile(noteId, blob, name, duration) {
+    await db.transaction('rw', db.musicFiles, db.notes, async () => {
+      await db.musicFiles.where('noteId').equals(noteId).delete();
+      await db.musicFiles.add({ noteId, blob, name, size: blob.size });
+      await db.notes.update(noteId, { musicName: name, duration, editedAt: new Date() });
+    });
+  },
+
+  async getAllNotes(orderBy = 'editedAt') {
+    const notes = await db.notes.toArray();
+    notes.sort((a, b) => {
+      if (orderBy === 'title') return a.title.localeCompare(b.title);
+      return new Date(b[orderBy]) - new Date(a[orderBy]);
+    });
+    return notes;
+  },
+
+  async exportJSON(noteId) {
+    const data = await this.loadNote(noteId);
+    if (!data) return null;
+
+    const exportData = {
+      version: 2,
+      note: { title: data.note.title, duration: data.note.duration, musicName: data.note.musicName },
+      dancers: data.dancers.map((d) => ({ name: d.name, color: d.color })),
+      formations: data.formations.map((f) => ({
+        startTime: f.startTime,
+        duration: f.duration,
+        positions: f.positions.map((p) => ({ dancerIndex: data.dancers.findIndex((d) => d.id === p.dancerId), x: p.x, y: p.y })),
+      })),
+    };
+
+    return JSON.stringify(exportData, null, 2);
+  },
+
+  async importJSON(jsonString) {
+    const data = JSON.parse(jsonString);
+
+    if (data.version === 2) {
+      return this._importV2(data);
+    }
+    // Legacy format: [dancers, formations, noteInfo] (sparse array)
+    if (Array.isArray(data)) {
+      return this._importLegacy(data);
+    }
+    throw new Error('지원하지 않는 파일 형식입니다.');
+  },
+
+  async _importV2(data) {
+    return db.transaction('rw', db.notes, db.dancers, db.formations, db.positions, async () => {
+      const now = new Date();
+      const noteId = await db.notes.add({
+        title: data.note.title,
+        musicName: data.note.musicName,
+        musicBlobId: null,
+        duration: data.note.duration || 30000,
+        createdAt: now,
+        editedAt: now,
+      });
+
+      const dancerIds = [];
+      for (let i = 0; i < data.dancers.length; i++) {
+        const d = data.dancers[i];
+        const did = await db.dancers.add({ noteId, name: d.name, color: d.color, order: i });
+        dancerIds.push(did);
+      }
+
+      for (let i = 0; i < data.formations.length; i++) {
+        const f = data.formations[i];
+        const fid = await db.formations.add({ noteId, startTime: f.startTime, duration: f.duration, order: i });
+        for (const pos of f.positions) {
+          if (pos.dancerIndex >= 0 && pos.dancerIndex < dancerIds.length) {
+            await db.positions.add({ formationId: fid, dancerId: dancerIds[pos.dancerIndex], x: pos.x, y: pos.y });
+          }
+        }
+      }
+
+      return noteId;
+    });
+  },
+
+  // Legacy format: [dancers(sparse), formations, noteInfo]
+  async _importLegacy(data) {
+    const [rawDancers, rawFormations, rawNoteInfo] = data;
+
+    // Filter out null entries from sparse array (index 0 is null)
+    const dancers = rawDancers.filter((d) => d !== null && d !== undefined);
+    const dancerIdRemap = new Map();
+    rawDancers.forEach((d, i) => {
+      if (d !== null && d !== undefined) {
+        dancerIdRemap.set(d.id || i, dancers.indexOf(d));
+      }
+    });
+
+    const formations = rawFormations.map((f) => {
+      const positions = [];
+      if (f.positionsAtSameTime) {
+        f.positionsAtSameTime.forEach((pos, did) => {
+          if (pos !== null && pos !== undefined) {
+            const newIndex = dancerIdRemap.get(did);
+            if (newIndex !== undefined) {
+              positions.push({ dancerIndex: newIndex, x: pos.x, y: pos.y });
+            }
+          }
+        });
+      }
+      return { startTime: f.start, duration: f.duration, positions };
+    });
+
+    const v2Data = {
+      note: {
+        title: rawNoteInfo?.title || '가져온 노트',
+        duration: rawNoteInfo?.duration || 30000,
+        musicName: rawNoteInfo?.musicname || null,
+      },
+      dancers: dancers.map((d) => ({ name: d.name, color: d.color })),
+      formations,
+    };
+
+    return this._importV2(v2Data);
+  },
+
+  async requestPersistence() {
+    if (navigator.storage && navigator.storage.persist) {
+      return navigator.storage.persist();
+    }
+    return false;
+  },
+};

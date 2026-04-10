@@ -1,0 +1,12 @@
+<!doctype html>
+<html>
+  <head>
+    <script>
+      // Redirect to index with hash routing
+      var path = window.location.pathname;
+      var base = '/ChoreoNote/';
+      if (path.startsWith(base)) path = path.slice(base.length);
+      window.location.replace(base + '#/' + path);
+    </script>
+  </head>
+</html>

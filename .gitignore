@@ -2,3 +2,7 @@
 /public/assets/music
 todo.txt
 .env
+
+# Client
+client/node_modules
+client/dist
