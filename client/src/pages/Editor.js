@@ -15,6 +15,7 @@ let renderer = null;
 let noteData = null;
 let selectedFormation = 0;
 let currentMs = 0;
+let unsaved = false;
 
 export async function renderEditor(container, noteId) {
   noteId = Number(noteId);
@@ -199,7 +200,7 @@ function setupPlayback(container) {
   });
 
   // Prevent accidental navigation on unsaved changes
-  let unsaved = true;
+  unsaved = true;
   setNavigationGuard(() => unsaved);
 
   window.onbeforeunload = (e) => {
@@ -602,11 +603,11 @@ function setupToolbar(container) {
 function setupHeader(container, noteId) {
   container.querySelector('#back-btn').addEventListener('click', () => navigate('/'));
 
-  container.querySelector('#save-btn').addEventListener('click', async () => {
+  async function saveToDB(silent = false) {
     const title = container.querySelector('#title-input').value;
     await NoteStore.updateNoteTitle(noteId, title);
     await NoteStore.saveNote(noteId, {
-      dancers: noteData.dancers.map((d, i) => ({ name: d.name, color: d.color })),
+      dancers: noteData.dancers.map((d) => ({ name: d.name, color: d.color })),
       formations: noteData.formations.map((f) => ({
         startTime: f.startTime,
         duration: f.duration,
@@ -618,8 +619,23 @@ function setupHeader(container, noteId) {
       })),
     });
     unsaved = false;
-    showToast('저장 완료!');
-  });
+    if (!silent) showToast('저장 완료!');
+  }
+
+  container.querySelector('#save-btn').addEventListener('click', () => saveToDB());
+
+  // Auto-save every 30 seconds when there are unsaved changes
+  const autoSaveInterval = setInterval(async () => {
+    if (unsaved) {
+      await saveToDB(true);
+      showToast('자동 저장됨', 1500);
+    }
+  }, 30000);
+
+  // Clean up interval when leaving editor
+  const origGuard = navigationGuard;
+  const cleanupAutoSave = () => clearInterval(autoSaveInterval);
+  window.addEventListener('hashchange', cleanupAutoSave, { once: true });
 
   container.querySelector('#export-json-btn').addEventListener('click', async () => {
     const json = await NoteStore.exportJSON(noteId);
@@ -815,6 +831,7 @@ function takeSnapshot() {
 
 function saveSnapshot() {
   pushState(takeSnapshot());
+  unsaved = true;
 }
 
 function restoreSnapshot(snapshot) {
